@@ -1,0 +1,33 @@
+/*navbar*/
+.nav{
+    position: fixed;
+    z-index: 8;
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+    top: 78px;
+    box-shadow:0px 4px 9px 0px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 0px 4px 9px 0px rgba(0,0,0,0.1);
+    -moz-box-shadow: 0px 4px 9px 0px rgba(0,0,0,0.1);
+    -o-box-shadow: 0px 4px 9px 0px rgba(0,0,0,0.1);
+}
+.nav-box{
+    position: relative;
+    width: 500px;
+    height: 50px;
+    left: 50%;
+    margin-left: -250px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+.nav-item{
+    color: #2F2F33;
+    font-size: 14px;
+    cursor: pointer;
+}
+.nav-active{
+    font-weight: bold;
+    color: #2F2F33;
+}

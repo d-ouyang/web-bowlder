@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>掌玉宝|玉石列表</title>
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../layui/css/layui.css">
+  <link rel="stylesheet" href="../common/style/base.css">
+  <link rel="stylesheet" href="../common/style/header.css">
+  <link rel="stylesheet" href="../common/style/nav.css">
+  <link rel="stylesheet" href="../common/style/footer.css">
+</head>
+<style>
+  .main-content{
+    position: relative;
+    padding-top: 128px;
+    background-color: #F9F9FA;
+  }
+  .main-list{
+    padding: 72px 125px 20px;
+  }
+  .main-list-header{
+    width: 100%;
+    min-width: 1190px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 70px;
+  }
+  .list-header-item{
+    width: 340px;
+    height: 193px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 32px 40px 0 20px;
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 6px 12px 0 rgba(0,0,0,0.5);
+    -moz-box-shadow: 0 6px 12px 0 rgba(0,0,0,0.5);
+    -o-box-shadow: 0 6px 12px 0 rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .header-item-left{
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .header-item-left img{
+    width: 84px;
+    height: 84px;
+    margin-bottom: 10px;
+  }
+  .header-item-left h3{
+    font-size: 14px;
+    color: #2F2F33;
+    font-weight: bold;
+    margin-bottom: 3px;
+  }
+  .header-item-left p{
+    font-size: 10px;
+    color: #2F2F33;
+  }
+  .header-item-right{
+    width: 140px;
+    color: #9DADBD;
+    text-align: right;
+  }
+  .header-item-right h3{
+    font-size: 23px;
+  }
+  .header-item-right p{
+    font-size: 25px;
+    letter-spacing: 2px;
+  }
+
+  .main-list-body{
+    width: 100%;
+    min-width: 1190px;
+  }
+  .main-list-title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .left-block{
+    width: 4px;
+    height: 20px;
+    background-color: #85D78D;
+    margin-right: 6px;
+  }
+  .main-list-title h3{
+    font-weight: bold;
+    font-size: 18px;
+    color: #2F2F33;
+  }
+  .main-list-item{
+    width: 100%;
+    height: 180px;
+    border: 1px solid #F0EFF4;
+    padding: 30px;
+    border-radius: 6px;
+    background-color: #fff;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .item-left{
+    display: flex;
+    flex-direction: row;
+  }
+  .item-img-wrapper{
+    margin-right: 20px;
+  }
+  .item-img-wrapper img{
+    width: 120px;
+    height: 120px;
+    border-radius: 4px;
+  }
+  .item-info{
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .item-info-title{
+    font-size: 15px;
+    color: #2F2F33;
+    font-weight: bold;
+  }
+  .item-info-detail{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #2F2F33;
+  }
+  .item-info-detail p{
+    margin-bottom: 5px;
+  }
+  .personal{
+    margin-bottom: 0;
+  }
+  .item-right{
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .item-edit{
+    text-align: right;
+    font-size: 14px;
+    color: #2F2F33;
+  }
+  .item-date{
+    font-size: 12px;
+    color: #9B9B9B;
+  }
+
+  /*.layui-flow-more{*/
+    /*margin: 0;*/
+  /*}*/
+
+
+</style>
+<body>
+<section class="layui-main">
+  <!--header -->
+  <section class="header box-sizing">
+    <div class="title">
+      <image src=""></image>
+      <div class="layui-inline title-one">掌玉宝</div>
+      <div class="layui-inline title-two">交易平台</div>
+    </div>
+    <div class="header-right layui-hide-sm layui-show-md-block layui-show-lg-block">
+      <div class="search-box">
+        <i class="layui-icon cancle-icon layui-hide" id="header-cancle">&#x1006;</i>
+        <input type="text" id="header-search-input" class="layui-inline search-input layui-hide" placeholder="搜索商品编号或者分类名称">
+        <i class="layui-icon search-icon" id="header-search">&#xe615;</i>
+      </div>
+
+      <div class="my-count">
+        <div class="count" id="count">我的账户</div>
+        <div class="exit-box" id="exit" style="display: none;">
+          <div class="exit">退出</div>
+          <div class="triangle"></div>
+        </div>
+      </div>
+
+      <div class="lan">
+        <div class="layui-inline lan-active" id="chinese">中文</div>
+        <div class="layui-inline lan-active"> /</div>
+        <div class="layui-inline" id="English">English</div>
+      </div>
+    </div>
+  </section>
+
+  <!--navbar-->
+  <section class="nav">
+    <ul class="nav-box">
+      <li class="nav-item" data-page="index">
+        首页
+      </li>
+      <li class="nav-item nav-active" data-page="list">
+        玉石列表
+      </li>
+      <li class="nav-item" data-page="add">
+        添加玉石
+      </li>
+      <li class="nav-item" data-page="contact">
+        联系方式
+      </li>
+    </ul>
+  </section>
+
+  <!--body-->
+  <section class="main-content">
+    <div class="main-list box-sizing">
+      <div class="main-list-header">
+        <div class="list-header-item box-sizing">
+          <div class="header-item-left">
+            <img lay-src="../common/images/stone@3x.png">
+            <h3>原石</h3>
+            <p>Original stone</p>
+          </div>
+          <div class="header-item-right">
+            <h3>共记录</h3>
+            <p>0个</p>
+          </div>
+        </div>
+        <div class="list-header-item box-sizing">
+          <div class="header-item-left">
+            <img lay-src="../common/images/cropping@3x.png">
+            <h3>毛料</h3>
+            <p>More than expected</p>
+          </div>
+          <div class="header-item-right">
+            <h3>共记录</h3>
+            <p>0个</p>
+          </div>
+        </div>
+        <div class="list-header-item box-sizing">
+          <div class="header-item-left">
+            <img lay-src="../common/images/product@3x.png">
+            <h3>成品</h3>
+            <p>end product</p>
+          </div>
+          <div class="header-item-right">
+            <h3>共记录</h3>
+            <p>0个</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-list-body transx50">
+        <div class="main-list-title">
+          <div class="left-block"></div>
+          <h3>最新上传</h3>
+        </div>
+        <ul id="main-list">
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!--footer-->
+  <section class="footer">
+    <div class="layui-row">
+      <div class="footer-box layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 box-sizing">
+        <h3 class="footer-title">掌玉宝</h3>
+        <div class="footer-desc layui-row">
+          <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+            掌玉宝 是一个提供原石、切割后毛料、成品场外交易的平台，我们致力于让玉石更加全面、更详细的展现在平台。
+          </div>
+        </div>
+      </div>
+      <div class="footer-box layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 box-sizing">
+        <h3 class="footer-title">联系</h3>
+        <div class="footer-desc layui-row">
+          <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+            <div class="footer-info">电话：13622334451</div>
+            <div class="footer-info">邮箱：mapleparking@talking.com</div>
+          </div>
+          <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+            <div class="footer-info">网址：www.mapleparking.com</div>
+            <div class="footer-info">地址：广东省佛山市XXXX号缅甸玉石交易中心</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-icp">
+      沪ICP备 16019295号 版权所有 ©mapleparking.com
+    </div>
+  </section>
+</section>
+</body>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script type="text/javascript" src="../libs/plugin.js"></script>
+<script type="text/javascript">
+  $(function(){
+    layui.use(['layer', 'form', 'flow', 'laypage', 'laytpl'], function() {
+      var layer = layui.layer,
+        form = layui.form,
+        flow = layui.flow,
+        laypage= layui.laypage,
+        laytpl = layui.laytpl;
+
+      var CURRENT_PAGE = 'list';
+
+      var ERR_OK = 0;
+
+      var fromPage, isLog, baseUrl, token, history_data;
+
+      var init = function () {
+        fromPage = getParamValue('from') || 'index';
+        token = layui.data('login_info').access_token;
+        isLog = returnLoginState(token);
+        baseUrl = returnBaseUrl();
+        history_data = layui.data('history').history_data;
+        if (!history_data) {
+          history_data = {
+            "title": "最近搜索",
+            "list" : []
+          }
+          layui.data('history', {
+            key: 'history_data',
+            value: history_data
+          })
+        }
+      }
+
+      init();
+
+      var headerModule = (function (h) {
+        var $count = h.$count = $('#count');
+        var $exit = h.$exit = $('#exit');
+        var $headerSearch = h.$headerSearch = $('#header-search');
+        var $headerCancle = h.$headerCancle = $('#header-cancle');
+        var $headerSearchInput = h.$headerSearchInput = $('#header-search-input');
+
+        h.init = function () {
+          if (!isLog) {
+            $count.html('登录');
+            layer.tips('您还未登录您的账号，请先登录', $count, {
+              tips: [1, '#000000'],
+              time: 4000
+            });
+            return;
+          } else {
+            $count.html('我的账户');
+          }
+        }
+
+        $count.on('click', function () {
+          if (isLog) {
+            $exit.toggle();
+          } else {
+            window.location.href = './login.html?from=' + CURRENT_PAGE;
+          }
+        })
+
+        $exit.on('click', function () {
+          layui.data('login_info',null);
+          window.location.href = './login.html?from=' + CURRENT_PAGE;
+        })
+
+        $headerSearch.on('mousedown', function() {
+          if ($headerSearchInput.val() != '') {
+            var h_list = history_data.list;
+            h_list.unshift($headerSearchInput.val());
+            h_list = h_list.splice(0,10);
+            history_data.list = h_list;
+            console.log(h_list);
+            layui.data('history', {
+              key: 'history_data',
+              value: history_data
+            })
+            $headerSearchInput.val('');
+          }
+          $headerSearchInput.val('');
+          $(this).parent('.search-box').width(285);
+          $(this).siblings('input,i').removeClass('layui-hide');
+          $(this).css('left','255px');
+          $('.my-count, .lan').addClass('layui-hide');
+        })
+
+        $headerCancle.on('click', function() {
+          $(this).parent('.search-box').width(0);
+          $(this).addClass('layui-hide').siblings('input').addClass('layui-hide');
+          $headerSearch.css('left','0');
+          $headerSearchInput.val('');
+          $('.my-count, .lan').removeClass('layui-hide');
+        })
+
+        $headerSearchInput.on('focus',function() {
+          $(this).attr('placeholder', '');
+        }).on('keyup', function(e) {
+          var e = e || window.event;
+          if (e.keyCode === 13) {
+            $(this).blur();
+            var currentValue = $(this).val();
+            if (currentValue == '') {
+              return;
+            }
+            var h_list = history_data.list;
+            h_list.unshift($(this).val());
+            h_list = h_list.splice(0,10);
+            history_data.list = h_list;
+            console.log(h_list);
+            layui.data('history', {
+              key: 'history_data',
+              value: history_data
+            })
+            $(this).val('');
+          }
+        }).on('blur', function(e) {
+          $(this).attr('placeholder', '搜索商品编号或者分类名称');
+        })
+
+        h.init();
+
+        return h;
+      })(window.headerModule || {});
+
+      var navModule = (function (n) {
+        $('.nav-item').on('click', function () {
+          if ($(this).hasClass('nav-active')) {
+            return;
+          }
+          var gotoPage = $(this).attr('data-page');
+          window.location.href = './'+ gotoPage + '.html';
+        })
+        return n;
+      })(window.navModule || {});
+
+      var listModule = (function(l){
+        //返回请求的 url
+        function returnUrl (page, limit) {
+          return baseUrl + 'jades' + '?page=' + page + '&limit=' + limit;
+        }
+
+        // 渲染数据
+        function renderListData(data, lis) {
+          layui.each(data, function(index, item) {
+            lis.push(
+              '<li class="main-list-item box-sizing" data-number="'+ item.serialNumber +'" data-type="'+ item.type +'" data-id="'+ item.id +'">'+
+              '<div class="item-left">'+
+              '<div class="item-img-wrapper">'+
+              '<img lay-src="'+ item.image +'">'+
+              '</div>'+
+              '<div class="item-info">'+
+              '<div class="item-info-title">' + item.name + '</div>'+
+              '<div class="item-info-detail">'+
+              '<p class="code">编号：'+ item.serialNumber +'</p>'+
+              '<p class="tag">分类：'+ returnType(item.type) +'</p>'+
+              '<p class="personal">持有人：'+ item.owner +'</p>'+
+              '</div>'+
+              '</div>'+
+              '</div>'+
+              '<div class="item-right">'+
+              '<p class="item-edit" data-number="'+ item.serialNumber +'" data-type="'+ item.type +'" data-id="'+ item.id +'">编辑</p>'+
+              '<p class="item-date">'+ item.updateTime +'</p>'+
+              '</div>'+
+              '</li>'
+            )
+          });
+
+          $('#main-list').off('click').on('click', function() {
+            // console.log($(this));
+            var e = e || window.event;
+            var target = e.target || e.srcElement;
+            var nodename = target.nodeName.toLowerCase();
+            var currentId, currentType, currentNumber;
+            if (nodename == 'ul' || $(target).hasClass('layui-flow-more')) {
+              return;
+            } else if ($(target).hasClass('item-edit')) {
+              currentId = $(target).attr('data-id');
+              currentType = $(target).attr('data-type');
+              currentNumber = $(target).attr('data-number');
+              window.location.href = './add.html?id=' + currentId + '&type=' + currentType + '&number=' + currentNumber;
+            } else if (nodename != 'cite'){
+              if (nodename == 'li') {
+                currentId = $(target).attr('data-id');
+                currentType = $(target).attr('data-type');
+                currentNumber = $(target).attr('data-number');
+              } else {
+                currentId = $(target).parents('.main-list-item').attr('data-id');
+                currentType = $(target).parents('.main-list-item').attr('data-type');
+                currentNumber = $(target).parents('.main-list-item').attr('data-number');
+              }
+              console.log(currentId, currentType, currentNumber);
+              window.open('./detail.html?id=' + currentId + '&type=' + currentType + '&number=' + currentNumber + '&from=' + CURRENT_PAGE);
+            }
+          })
+        }
+
+        token = layui.data('login_info').access_token;
+
+        //总数的请求
+        var countRequestUrl = baseUrl + 'jades/count';
+        requestGet(countRequestUrl, token, function(data) {
+          console.log(data);
+          if (data.code === ERR_OK) {
+            console.log($('.list-header-item').eq(0));
+            for (var i in data.data) {
+              $('.header-item-right').eq(i).find('p').text(data.data[i].count + '个');
+            }
+          } else {
+            layer.msg(data.msg);
+          }
+        })
+
+        //注册点击 原石、切料、成品 事件
+        $('.list-header-item').on('click', function () {
+          var tarIndex = $(this).index();
+          window.open('./results.html?from=' + CURRENT_PAGE + '&type=' + (tarIndex+1));
+        })
+
+        function flowLoad() {
+          flow.load({
+            elem: '#main-list',
+            scrollElem: '#main-list',
+            isAuto: true,
+            mb: 50,
+            end: '这是底线，没有更多了',
+            isLazyimg: true,
+            done: function(page, next) {
+              var lis = [];
+              var listRequestUrl = returnUrl(page, 10);
+              requestGet(listRequestUrl, token, function(data){
+                if (data.code === ERR_OK) {
+                  renderListData(data.data.content, lis);
+                  next(lis.join(''), page < data.data.totalPages);
+                } else {
+                  layer.msg(data.msg);
+                }
+              });
+            }
+          })
+        }
+
+        l.init = function () {
+          flow.lazyimg();
+          flowLoad();
+        }
+
+        l.init();
+
+        return l;
+      })(window.listModule || {});
+
+      configMoudle = headerModule = navModule = homeModule = null;
+    })
+  })
+</script>
+
+</html>

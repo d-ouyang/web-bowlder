@@ -1,0 +1,20 @@
+.box-sizing{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.transx50{
+    margin-left: 50%;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+}
+body{
+    font-family: "PingFang SC";
+}
+.layui-main{
+    width: 100%;
+    min-width: 1440px;
+}

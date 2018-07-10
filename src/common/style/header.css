@@ -1,0 +1,138 @@
+/* header */
+.header{
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    height: 78px;
+    width: 100%;
+    padding: 0 125px;
+    background-color: #fff;
+}
+.title {
+    width: 100%;
+    font-size: 26px;
+    font-family: STSong;
+    font-weight: bold;
+    text-align: center;
+    line-height: 78px;
+}
+.title-one {
+    color: #DAAE60;
+}
+.title-two {
+    color: #C78A1E;
+}
+.header-right{
+    width: 300px;
+    height: 78px;
+    position: absolute;
+    top: 0;
+    right: 125px;
+    /*background-color: #1E9FFF;*/
+}
+.search-box {
+    position: absolute;
+    left: 0;
+    top: 24px;
+    /*width: 285px;*/
+    width: 0;
+    height: 30px;
+    border-bottom: 1px solid #2F2F33;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+}
+.cancle-icon {
+    font-size: 25px;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+}
+.search-input {
+    position: absolute;
+    left: 38px;
+    top: 2.5px;
+    border: 0;
+    outline: 0;
+    width: 220px;
+    height: 25px;
+    background-color: transparent;
+    font-size: 14px;
+}
+.search-icon{
+    font-size: 25px;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    cursor: pointer;
+}
+.my-count{
+    position: absolute;
+    left: 50px;
+    top: 29px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+}
+.count{
+    font-size: 14px;
+    font-weight: bold;
+    color: #2F2F33;
+    cursor: pointer;
+}
+.exit-box{
+    position: absolute;
+    left: -16px;
+    top: 30px;
+    width: 150px;
+    height: 40px;
+    border: 1px solid #E9E9E9;
+    box-shadow:0px 2px 4px 0px rgba(0,0,0,0.08);
+    border-radius:2px;
+    background-color: #fff;
+    cursor: pointer;
+}
+.exit{
+    font-size: 14px;
+    color: #2F2F33;
+    line-height: 40px;
+    margin-left: 14px;
+}
+.triangle{
+    position: absolute;
+    left: 35px;
+    top: -5px;
+    width: 8px;
+    height: 8px;
+    background-color: #fff;
+    border-left: 1px solid #E9E9E9;
+    border-top: 1px solid #E9E9E9;
+    transform: rotateZ(45deg);
+}
+.lan{
+    position: absolute;
+    left: 140px;
+    top: 29px;
+    font-size: 14px;
+    color: #AAAAAA;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    cursor: pointer;
+}
+.lan-active{
+    font-weight: bold;
+    color: #2F2F33;
+}

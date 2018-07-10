@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>掌玉宝|玉石详情</title>
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../layui/css/layui.css">
+  <link rel="stylesheet" href="../common/style/base.css">
+  <link rel="stylesheet" href="../common/style/header.css">
+  <link rel="stylesheet" href="../common/style/nav.css">
+  <link rel="stylesheet" href="../common/style/footer.css">
+</head>
+<style>
+  .detail{
+    position: relative;
+    padding: 128px 125px 20px;
+    background-color: #F9F9FA;
+  }
+  .detail > div{
+    width: 100%;
+    min-width: 1190px;
+  }
+
+  .detail-content-title{
+    font-size: 12px;
+    color: #515557;
+    padding-top: 22px;
+    margin-bottom: 18px;
+  }
+
+  .detail-item{
+    background-color: #fff;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .detail-header{
+    padding: 20px 40px 22px 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .detail-header-left{
+    position: relative;
+    width: 480px;
+  }
+  .middle-img-wrapper{
+    position: relative;
+    width: 100%;
+    height: 450px;
+    margin-bottom: 30px;
+  }
+  .middle-img-wrapper img{
+    width: 100%;
+    height: 430px;
+  }
+  .mask{
+    width: 240px;
+    height: 215px;
+    background-color: #000;
+    filter: Alpha(opacity=50);
+    opacity:0.5;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    cursor: move;
+  }
+  .small-img-wrapper{
+    position: relative;
+    width: 480px;
+    height: 100px;
+    overflow: hidden;
+  }
+  .small-img-wrapper p{
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    width: 38px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    background-color: rgba(60, 61, 65, 0.8);
+    font-size: 25px;
+    color: #fff;
+    font-weight: bold;
+  }
+  .small-img-wrapper .prev{
+    left: -38px;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+  }
+  .small-img-wrapper .next{
+    right: -38px;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+  }
+  .small-img-wrapper .middle{
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+  }
+  .small-img-wrapper .middle > li{
+    position: relative;
+    width: 100px;
+    height: 100px;
+    float: left;
+    padding: 0 5px;
+  }
+  .small-img-wrapper .middle img{
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+  }
+  .small-img-wrapper .middle img:hover{
+    transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -o-transform: scale(1.1);
+  }
+  .small-img-wrapper .middle .img-mask{
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    left: 5px;
+    top: 0;
+    background-color: rgba(131, 141, 143, 0.6);
+    display: none;
+  }
+  .big-img-wrapper{
+    position: absolute;
+    left: 580px;
+    top: 0;
+    width: 480px;
+    height: 430px;
+    overflow: hidden;
+    display: none;
+    background-color: #fff;
+  }
+  .big-img-item img{
+    width: 960px;
+    height: 960px;
+  }
+  .detail-header-right{
+    width: 615px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .detail-header-right-header{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-top: 18px;
+  }
+  .detail-header-baseinfor{
+    width: 380px;
+  }
+  .detail-header-baseinfor p{
+    letter-spacing: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #838C8D;
+    margin-bottom: 14px;
+  }
+  .detail-header-baseinfor h3{
+    font-size: 32px;
+    font-weight: bold;
+    color: #1F1F1F;
+    margin-bottom: 15px;
+  }
+  .detail-header-baseinfor .type-btn{
+    width: 62px;
+    height: 22px;
+    border-color: #85D78D;
+    font-size: 10px;
+    color: #85D78D;
+    line-height: 22px;
+  }
+  .edit-btn-wrapper .edit-btn{
+    width: 114px;
+    height: 34px;
+    background-color: #85D78D;
+    line-height: 34px;
+    font-size: 10px;
+  }
+  .detail-header-detailinfo-item{
+    margin-bottom: 9px;
+  }
+  .detail-header-detailinfo-item p{
+    letter-spacing: 2px;
+    display: inline-block;
+    width: 48%;
+    font-size: 14px;
+    color: #2F2F33;
+    margin-bottom: 26px;
+  }
+  .detail-header-detailinfo-box p{
+    letter-spacing: 2px;
+    font-size: 14px;
+    color: #2F2F33;
+  }
+  .detail-header-detailinfo-box span{
+    color: #5151F4;
+    cursor: pointer;
+    white-space:normal;
+    word-wrap:break-word;
+  }
+
+  /*加工信息*/
+  .title-box{
+    padding: 24px 20px;
+    border-bottom: 1px solid #F0EFF4;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .left-block{
+    width: 4px;
+    height: 20px;
+    background-color: #85D78D;
+    margin-right: 6px;
+  }
+  .detail-item-title{
+    font-size: 18px;
+    font-weight: bold;
+    color: #2F2F33;
+  }
+  .detail-content{
+    padding: 20px 20px 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .detail-content p{
+    width: 33%;
+    font-size: 14px;
+    color: #2F2F33;
+    margin-bottom: 26px;
+  }
+  .detail-content p a{
+    color: #5151F4;
+  }
+
+  /*出库信息*/
+  .ex-info-box{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    font-size: 14px;
+    color: #2F2F33;
+    padding-bottom: 26px;
+  }
+  .ex-info-box h3{
+    font-size: 14px;
+    width: 83px;
+  }
+  .ex-info p{
+    width: 636px;
+    white-space:normal;
+    word-wrap:break-word;
+  }
+
+  /*销售信息*/
+  .preview-imgs{
+    position: relative;
+    width: 636px;
+    overflow-x: auto;
+  }
+  .preview-imgs-box li{
+    float: left;
+    margin-right: 2px;
+    margin-bottom: 2px;
+  }
+  .preview-imgs-box li img{
+    width: 100px;
+    height: 100px;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .preview-imgs-box li img:hover{
+    transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -o-transform: scale(1.1);
+  }
+
+  .detail-content .no-infomation{
+    font-size: 16px;
+    line-height: 32px;
+    color: #838C8D;
+  }
+</style>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script type="text/javascript" src="../libs/plugin.js"></script>
+<script type="text/javascript" src="../libs/mag.js"></script>
+<body>
+  <section class="layui-main">
+    <!--header -->
+    <section class="header box-sizing">
+      <div class="title">
+        <image src=""></image>
+        <div class="layui-inline title-one">掌玉宝</div>
+        <div class="layui-inline title-two">交易平台</div>
+      </div>
+      <div class="header-right layui-hide-sm layui-show-md-block layui-show-lg-block">
+        <div class="search-box">
+          <i class="layui-icon cancle-icon layui-hide" id="header-cancle">&#x1006;</i>
+          <input type="text" id="header-search-input" class="layui-inline search-input layui-hide"
+                 placeholder="搜索商品编号或者分类名称">
+          <i class="layui-icon search-icon" id="header-search">&#xe615;</i>
+        </div>
+
+        <div class="my-count">
+          <div class="count" id="count">我的账户</div>
+          <div class="exit-box" id="exit" style="display: none;">
+            <div class="exit">退出</div>
+            <div class="triangle"></div>
+          </div>
+        </div>
+
+        <div class="lan">
+          <div class="layui-inline lan-active" id="chinese">中文</div>
+          <div class="layui-inline lan-active"> /</div>
+          <div class="layui-inline" id="English">English</div>
+        </div>
+      </div>
+    </section>
+
+    <!--navbar-->
+    <section class="nav">
+      <ul class="nav-box">
+        <li class="nav-item" data-page="index">
+          首页
+        </li>
+        <li class="nav-item" data-page="list">
+          玉石列表
+        </li>
+        <li class="nav-item" data-page="add">
+          添加玉石
+        </li>
+        <li class="nav-item" data-page="contact">
+          联系方式
+        </li>
+      </ul>
+    </section>
+
+    <!--detail body-->
+    <section class="detail">
+      <div class="transx50">
+        <div>
+          <div class="detail-content-title">
+            当前位置：玉石列表 > 成品 > CP03838240
+          </div>
+
+          <div class="detail-item detail-header box-sizing">
+            <div class="detail-header-left" id="tpl-base-img-box">
+              <script type="text/html" id="tpl-base-img">
+                <div class="middle-img-wrapper">
+                  <img src="{{d[0]}}" alt="">
+                  <div class="mask"></div>
+                </div>
+                <div class="small-img-wrapper">
+                  <p class="prev layui-disabled"><i class="layui-icon">&#xe603;</i></p>
+                  <div class="middle_box">
+                    <ul class="middle">
+                      {{# layui.each(d, function(index, item) { }}
+                        <li>
+                          <img src="{{item}}" alt="">
+                          <div class="img-mask"></div>
+                        </li>
+                      {{# }); }}
+                    </ul>
+                  </div>
+                  <p class="next"><i class="layui-icon">&#xe602;</i></p>
+                </div>
+                <div class="big-img-wrapper">
+                  <div class="big-img-item">
+                    <img src="{{d[0]}}" alt="">
+                  </div>
+                </div>
+              </script>
+            </div>
+
+            <div class="detail-header-right" id="tpl-base-info-box">
+              <script type="text/html" id="tpl-base-info">
+                <div class="detail-header-right-header">
+                    <div class="detail-header-baseinfor">
+                      <p>基本信息</p>
+                      <h3>{{d.name}}</h3>
+                      <button class="layui-btn layui-btn-radius layui-btn-primary type-btn">
+
+                        {{# if(d.type == 1){}}
+                          原石
+                        {{# } else if (d.type == 2) {}}
+                          毛料
+                        {{# } else if (d.type == 3) {}}
+                          成品
+                        {{# } }}
+
+                      </button>
+                    </div>
+                    <div class="edit-btn-wrapper">
+                      <button class="layui-btn layui-btn-radius edit-btn" data-type="{{d.type}}" data-id="{{d.id}}" data-number="{{d.serialNumber}}"><i class="layui-icon">&#xe642;</i>编辑信息</button>
+                    </div>
+                </div>
+                <div class="detail-header-right-container">
+                  <div class="detail-header-detailinfo-item">
+                    <p>类型：
+                      {{# if(d.type == 1){}}
+                      原石
+                      {{# } else if (d.type == 2){}}
+                      毛料
+                      {{# } else if (d.type == 3){}}
+                      成品
+                      {{# } }}
+                    </p>
+                    <p>名称：{{d.name}}</p>
+                    <p>数量：{{d.quantity}}</p>
+                    <p>编号：{{d.serialNumber}}</p>
+                    <p>重量：{{d.weight}} kg</p>
+                    <p>持有者：{{d.owner}}</p>
+                    <p>记入日期：{{d.updateTime}}</p>
+                  </div>
+                  <div class="detail-header-detailinfo-box">
+                    <p>详细信息：<span>{{d.detail}}</span></p>
+                  </div>
+                </div>
+              </script>
+            </div>
+          </div>
+
+          <div class="detail-item detail-process box-sizing">
+            <div class="title-box box-sizing">
+              <div class="left-block"></div>
+              <div class="detail-item-title">加工信息</div>
+            </div>
+            <div class="detail-content box-sizing">
+              <p>是否切割：是</p>
+              <p>是否成品：是</p>
+              <p>加工者：李大奔</p>
+              <p>关联原石编号：<a href="#">YSDSIFSLFSDE</a></p>
+              <p>关联切料编号一：<a href="#">BADFAZVDEDEZ</a></p>
+              <p>关联切料编号二：<a href="#">YSDSIFSLFSDE</a></p>
+            </div>
+          </div>
+
+          <div class="detail-item detail-outgoing box-sizing">
+            <div class="title-box box-sizing">
+              <div class="left-block"></div>
+              <div class="detail-item-title">出库信息</div>
+            </div>
+            <div class="detail-content box-sizing" id="tpl-outbound-info-box">
+              <script type="text/html" id="tpl-outbound-info">
+                {{# if (d.isNull) { }}
+                  <p class="no-infomation">暂时没有相关信息</p>
+                {{# } else { }}
+                <p>出库编号：{{d.serialNumber}}</p>
+                <p>出库日期：{{d.outboundTime}}</p>
+                <p>出库持有人：{{d.owner}}</p>
+                <p>出库地点：{{d.outboundPlace}}</p>
+                <div class="ex-info-box">
+                  <h3>额外信息：</h3>
+                  <div class="ex-info">
+                    <p>{{d.remarkText}}</p>
+                    <div class="preview-imgs">
+                      <ul class="preview-imgs-box" id="preview-outgoing-imgs">
+                        {{# layui.each(d.remarkImage, function(index, item){ }}
+                        <li><img layer-pid="{{index}}" lay-src="{{item}}" src="{{item}}" alt="图片-{{index+1}}"></li>
+                        {{# }) }}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                {{# } }}
+              </script>
+            </div>
+          </div>
+
+          <div class="detail-item detail-market box-sizing" >
+            <div class="title-box box-sizing">
+              <div class="left-block"></div>
+              <div class="detail-item-title">销售信息</div>
+            </div>
+            <div class="detail-content box-sizing" id="tpl-sale-info-box">
+              <script type="text/html" id="tpl-sale-info">
+                {{# if (d.isNull) { }}
+                <p class="no-infomation">暂时没有相关信息</p>
+                {{# } else { }}
+                <p>销售玉石编号：{{d.serialNumber}}</p>
+                <p>销售日期：{{d.saleTime}}</p>
+                <p>销售人姓名：{{d.saler}}</p>
+                <p>销售地点：{{d.salePlace}}</p>
+                <p>销售金额：{{d.amount}} 元</p>
+                <div class="ex-info-box">
+                  <h3>额外信息：</h3>
+                  <div class="ex-info">
+                    <p>{{d.remarkText}}</p>
+                    <div class="preview-imgs">
+                      <ul class="preview-imgs-box" id="preview-market-imgs">
+                        {{# layui.each(d.remarkImage, function(index, item){ }}
+                        <li><img layer-pid="{{index}}" lay-src="{{item}}" src="{{item}}" alt="图片-{{index+1}}"></li>
+                        {{# }) }}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                {{# } }}
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--footer-->
+    <section class="footer">
+      <div class="layui-row">
+        <div class="footer-box layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 box-sizing">
+          <h3 class="footer-title">掌玉宝</h3>
+          <div class="footer-desc layui-row">
+            <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+              掌玉宝 是一个提供原石、切割后毛料、成品场外交易的平台，我们致力于让玉石更加全面、更详细的展现在平台。
+            </div>
+          </div>
+        </div>
+        <div class="footer-box layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 box-sizing">
+          <h3 class="footer-title">联系</h3>
+          <div class="footer-desc layui-row">
+            <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+              <div class="footer-info">电话：13622334451</div>
+              <div class="footer-info">邮箱：mapleparking@talking.com</div>
+            </div>
+            <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+              <div class="footer-info">网址：www.mapleparking.com</div>
+              <div class="footer-info">地址：广东省佛山市XXXX号缅甸玉石交易中心</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-icp">
+        沪ICP备 16019295号 版权所有 ©mapleparking.com
+      </div>
+    </section>
+
+  </section>
+</body>
+<script type="text/javascript">
+  $(function () {
+    layui.use(['layer', 'form', 'laytpl', 'flow', 'laypage'], function () {
+      var layer = layui.layer,
+        form = layui.form,
+        flow = layui.flow,
+        laypage = layui.laypage,
+        laytpl = layui.laytpl;
+
+      var CURRENT_PAGE = 'detail';
+
+      var ERR_OK = 0;
+
+      var fromPage, isLog, baseUrl, token, history_data;
+
+      var init = function () {
+        fromPage = getParamValue('from') || 'index';
+        token = layui.data('login_info').access_token;
+        isLog = returnLoginState(token);
+        baseUrl = returnBaseUrl();
+        history_data = layui.data('history').history_data;
+        if (!history_data) {
+          history_data = {
+            "title": "最近搜索",
+            "list" : []
+          }
+          layui.data('history', {
+            key: 'history_data',
+            value: history_data
+          })
+        }
+      }
+
+      init();
+
+      var headerModule = (function (h) {
+        var $count = h.$count = $('#count');
+        var $exit = h.$exit = $('#exit');
+        var $headerSearch = h.$headerSearch = $('#header-search');
+        var $headerCancle = h.$headerCancle = $('#header-cancle');
+        var $headerSearchInput = h.$headerSearchInput = $('#header-search-input');
+
+        h.init = function () {
+          if (!isLog) {
+            $count.html('登录');
+            layer.tips('您还未登录您的账号，请先登录', $count, {
+              tips: [1, '#000000'],
+              time: 4000
+            });
+            return;
+          } else {
+            $count.html('我的账户');
+          }
+        }
+
+        $count.on('click', function () {
+          if (isLog) {
+            $exit.toggle();
+          } else {
+            window.location.href = './login.html?from=' + CURRENT_PAGE;
+          }
+        })
+
+        $exit.on('click', function () {
+          window.location.href = './login.html?from=' + CURRENT_PAGE;
+        })
+
+        $headerSearch.on('click', function () {
+          if ($headerSearchInput.val() != '') {
+            console.log($headerSearchInput.val());
+            resultMoudle.$resultHeaderInput.val($headerSearchInput.val());
+            $headerSearchInput.val('');
+          }
+          $(this).parent('.search-box').width(285);
+          $(this).siblings('input,i').removeClass('layui-hide');
+          $(this).css('left', '255px');
+          $('.my-count, .lan').addClass('layui-hide');
+        })
+
+        $headerCancle.on('click', function () {
+          $(this).parent('.search-box').width(0);
+          $(this).addClass('layui-hide').siblings('input').addClass('layui-hide');
+          $headerSearch.css('left', '0');
+          $headerSearchInput.val('');
+          $('.my-count, .lan').removeClass('layui-hide');
+        })
+
+        $headerSearchInput.on('focus', function () {
+          $(this).attr('placeholder', '');
+        }).on('keyup', function (e) {
+          var e = e || window.event;
+          if (e.keyCode === 13) {
+            $(this).blur();
+            if ($(this).val() != '') {
+              console.log($(this).val());
+              resultMoudle.$resultHeaderInput.val($(this).val());
+              $(this).val('')
+            } else {
+              return;
+            }
+          }
+        }).on('blur', function () {
+          $(this).attr('placeholder', '搜索商品编号或者分类名称');
+        })
+
+        h.init();
+
+        return h;
+      })(window.headerModule || {});
+
+      var navModule = (function (n) {
+        $('.nav-item').on('click', function () {
+          if ($(this).hasClass('nav-active')) {
+            return;
+          }
+          var gotoPage = $(this).attr('data-page');
+          window.location.href = './' + gotoPage + '.html';
+        })
+        return n;
+      })(window.navModule || {});
+
+      var detailModule = (function(d) {
+        var token = layui.data('login_info').access_token;
+        var _type = getParamValue('type');
+        var _id = getParamValue('id');
+        var _number = getParamValue('number');
+        var requestUrl = baseUrl + 'jade/' + _number;
+        console.log(requestUrl);
+        console.log(token);
+
+        d.baseInfo = {};
+        d.processInfo = {};
+        d.outboundinfo = {};
+        d.saleinfo = {};
+
+        function handleData(data){
+          // console.log(data);
+          if (data.code === ERR_OK) {
+            handleBaseInfo(data.data.jadeInformation);
+            handleProcessInfo(data.data.processingInformation);
+            handleOutboundInfo(data.data.outboundInformation);
+            handleSaleInfo(data.data.salesInformation);
+          } else {
+            layer.msg(data.msg);
+          }
+        }
+
+        //处理 baseinfo
+        function handleBaseInfo(data) {
+          var images = data.image.split(',');
+          data.image = images;
+          d.baseInfo = data;
+          // console.log(d.baseInfo);
+          //照片渲染
+          var goalHtml = $('#tpl-base-img').html();
+          var goalEl = $('#tpl-base-img-box');
+          commonRender(goalHtml, d.baseInfo.image, goalEl);
+          /*
+           show  //正常状态的框
+           bigshow   // 放大的框的盒子
+           smallshow  //缩小版的框
+           mask   //放大的区域（黑色遮罩）
+           bigitem  //放大的框
+          */
+          var obimg = new mag('.middle-img-wrapper', '.big-img-wrapper','.small-img-wrapper','.mask','.big-img-item');
+          obimg.init();
+
+          // 基本信息渲染
+          commonRender($('#tpl-base-info').html(), d.baseInfo, $('#tpl-base-info-box'));
+
+          $('.edit-btn').on('click',function(){
+            console.log($(this));
+          })
+        }
+
+        //处理 processinfo
+        function handleProcessInfo(data) {
+          console.log(data);
+          data.type = _type;
+          d.processinfo = data;
+          console.log(d.processinfo);
+        }
+
+        // 处理 outboundinfo
+        function handleOutboundInfo(data) {
+          if (data) {
+            var images = data.remarkImage.split(',');
+            data.remarkImage = images;
+            data.isNull = false;
+          } else {
+            data = {};
+            data.isNull = true;
+          }
+          d.outboundinfo = data;
+          // console.log(d.outboundinfo);
+          // 渲染模板
+          commonRender($('#tpl-outbound-info').html(), d.outboundinfo, $('#tpl-outbound-info-box'));
+          layer.photos({
+            photos: "#preview-outgoing-imgs",
+            anim: 0
+          })
+        }
+
+        // 处理 saleinfo
+        function handleSaleInfo(data) {
+          if (data) {
+            var images = data.remarkImage.split(',');
+            data.remarkImage = images;
+            data.isNull = false;
+          } else {
+            data = {};
+            data.isNull = true;
+          }
+          d.saleinfo = data;
+          // console.log(d.saleinfo);
+          commonRender($('#tpl-sale-info').html(), d.saleinfo, $('#tpl-sale-info-box'));
+          layer.photos({
+            photos: '#preview-market-imgs',
+            anim: 0
+          })
+        }
+
+        // 模板渲染公共函数
+        function commonRender(goalHtml, data, goalEl) {
+          laytpl(goalHtml).render(data, function(html) {
+            goalEl.html(html);
+          })
+        }
+
+        function refresh(number) {
+          var requestUrl = baseUrl + 'jade/' + number;
+        }
+
+        d.init = function() {
+          // 请求详情数据
+          requestGet(requestUrl, token, handleData);
+        }
+
+        d.init();
+
+        return d;
+      })(window.detailModule || {});
+    })
+  })
+</script>
+</html>

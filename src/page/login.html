@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>掌玉宝|登录</title>
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../layui/css/layui.css">
+  <link rel="stylesheet" href="../common/style/base.css">
+  <link rel="stylesheet" href="../common/style/header.css">
+  <link rel="stylesheet" href="../common/style/nav.css">
+  <link rel="stylesheet" href="../common/style/footer.css">
+  <style>
+
+    /*main -body*/
+    .main-body {
+      position: relative;
+      top: 128px;
+    }
+
+    .login-bg {
+      position: absolute;
+      width: 1440px;
+      height: 795px;
+    }
+
+    .login-box {
+      width: 100%;
+      height: 795px;
+      padding: 112px 99px 0 125px;
+      border-top: 1px solid #F0EFF4;
+      background-color: #fff;
+    }
+
+    .login-box-title {
+      margin-bottom: 66px;
+    }
+
+    .login-title {
+      font-family: STSong;
+      font-size: 26px;
+      color: #B4B4B4;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .login-desc p {
+      color: #878787;
+      font-size: 15px;
+    }
+
+    .login-form-box {
+    }
+
+    .login-input-box {
+      position: relative;
+      width: 100%;
+      border: 1px solid #EAEAEA;
+      border-radius: 2px;
+      box-shadow: 0 25px 32px 0 rgba(0, 0, 0, 0.06);
+      margin-bottom: 51px;
+    }
+
+    .login-input-box hr {
+      margin: 0;
+    }
+
+    .input-box {
+      position: relative;
+      width: 100%;
+      height: 72px;
+    }
+
+    .left-block {
+      position: absolute;
+      opacity: 0;
+      width: 4px;
+      height: 73px;
+      background-color: #30C87B;
+      left: 0px;
+      top: 0;
+      -webkit-transition: opacity 0.3s ease;
+      -moz-transition: opacity 0.3s ease;
+      -o-transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease;
+    }
+
+    .left-block-active {
+      opacity: 1;
+    }
+
+    .count-input, .keyword-input {
+      position: absolute;
+      width: 100%;
+      height: 72px;
+    }
+
+    .l-label {
+      position: absolute;
+      left: 20px;
+      width: 100%;
+      font-size: 20px;
+      color: #CCCCCC;
+      top: 23px;
+      z-index: 1;
+      -webkit-transition: all 0.3s ease;
+      -moz-transition: all 0.3s ease;
+      -o-transition: all 0.3s ease;
+      transition: all 0.3s ease;
+    }
+
+    .l-input {
+      font-size: 15px;
+      color: #2F2F2F;
+      font-weight: bold;
+      border: 0;
+      outline: none;
+      position: absolute;
+      left: 20px;
+      width: 70%;
+      top: 23px;
+      background-color: transparent;
+      -webkit-transition: all 0.3s ease;
+      -moz-transition: all 0.3s ease;
+      -o-transition: all 0.3s ease;
+      transition: all 0.3s ease;
+    }
+
+    .l-label-active {
+      font-size: 13px;
+      top: 15px;
+    }
+
+    .l-input-active {
+      top: 37px;
+    }
+
+    .login-btn button {
+      width: 229px;
+      height: 60px;
+      border: 0;
+      border-radius: 6px;
+      background-color: #000;
+      color: #fff;
+      font-size: 18px;
+    }
+
+  </style>
+</head>
+<body>
+<section class="layui-main">
+  <!--header -->
+  <section class="header box-sizing">
+    <div class="title">
+      <image src=""></image>
+      <div class="layui-inline title-one">掌玉宝</div>
+      <div class="layui-inline title-two">交易平台</div>
+    </div>
+    <div class="header-right layui-hide-sm layui-show-md-block layui-show-lg-block">
+      <div class="search-box">
+        <i class="layui-icon cancle-icon layui-hide" id="header-cancle">&#x1006;</i>
+        <input type="text" id="header-search-input" class="layui-inline search-input layui-hide" placeholder="搜索商品编号或者分类名称">
+        <i class="layui-icon search-icon" id="header-search">&#xe615;</i>
+      </div>
+
+      <div class="my-count">
+        <div class="count" id="count">登录</div>
+        <div class="exit-box layui-hide" id="exit">
+          <div class="exit">退出</div>
+          <div class="triangle"></div>
+        </div>
+      </div>
+
+      <div class="lan">
+        <div class="layui-inline lan-active" id="chinese">中文</div>
+        <div class="layui-inline lan-active"> /</div>
+        <div class="layui-inline" id="English">English</div>
+      </div>
+    </div>
+  </section>
+
+  <!--navbar-->
+  <section class="nav">
+    <ul class="nav-box">
+      <li class="nav-item">
+        首页
+      </li>
+      <li class="nav-item">
+        玉石列表
+      </li>
+      <li class="nav-item">
+        添加玉石
+      </li>
+      <li class="nav-item">
+        联系方式
+      </li>
+    </ul>
+  </section>
+
+  <!--body-->
+  <section class="main-content">
+    <div class="main-body">
+      <img class="login-bg" lay-src="../common/images/login-bg.png">
+      <div class="layui-row ">
+        <div class="layui-col-lg5 layui-col-md5 layui-col-sm5 layui-col-xs5">
+          <div class="login-box box-sizing">
+            <div class="login-box-title">
+              <div class="login-title">
+                <span style="color: #2F2F2F;">掌玉宝</span>
+                <span>交易平台</span>
+              </div>
+              <div class="login-desc">
+                <p>欢迎回来！请登录您的交易账号</p>
+              </div>
+            </div>
+            <div class="login-form-box" id="login-form">
+              <form class="layui-form" action="">
+                <div class="login-input-box">
+                  <div class="count-input-box input-box">
+                    <div class="left-block"></div>
+                    <div class="count-input">
+                      <label for="personal-count" class="l-label">账号</label>
+                      <input class="l-input" type="text" name="account" id="personal-count" required lay-verify="required"
+                             lay-verType="tips">
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="keyword-input-box input-box">
+                    <div class="left-block"></div>
+                    <div class="keyword-input">
+                      <label for="personal-keyword" class="l-label">密码</label>
+                      <input class="l-input" type="password" name="password" id="personal-keyword" required
+                             lay-verify="required" lay-verType="tips">
+                    </div>
+                  </div>
+                </div>
+                <div class="login-btn">
+                  <button class="layui-btn" lay-submit lay-filter="forSubmit">登录</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--footer-->
+  <section class="footer">
+    <div class="layui-row">
+      <div class="footer-box layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 box-sizing">
+        <h3 class="footer-title">掌玉宝</h3>
+        <div class="footer-desc layui-row">
+          <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+            掌玉宝 是一个提供原石、切割后毛料、成品场外交易的平台，我们致力于让玉石更加全面、更详细的展现在平台。
+          </div>
+        </div>
+      </div>
+      <div class="footer-box layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 box-sizing">
+        <h3 class="footer-title">联系</h3>
+        <div class="footer-desc layui-row">
+          <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+            <div class="footer-info">电话：13622334451</div>
+            <div class="footer-info">邮箱：mapleparking@talking.com</div>
+          </div>
+          <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+            <div class="footer-info">网址：www.mapleparking.com</div>
+            <div class="footer-info">地址：广东省佛山市XXXX号缅甸玉石交易中心</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-icp">
+      沪ICP备 16019295号 版权所有 ©mapleparking.com
+    </div>
+  </section>
+</section>
+</body>
+<script type="text/javascript" src="../layui/layui.all.js"></script>
+<script type="text/javascript" src="../libs/plugin.js"></script>
+<script type="text/javascript">
+  $(function () {
+    layui.use(['layer', 'form'], function () {
+      var layer = layui.layer,
+        form = layui.form;
+
+      var ERR_OK = 0;
+
+      var fromPage, isLog, baseUrl, token;
+
+      var init = function () {
+        fromPage = getParamValue('from') || 'index';
+        token = layui.data('login_info').access_token;
+        isLog = returnLoginState(token);
+        baseUrl = returnBaseUrl();
+        console.log(fromPage, isLog, token, baseUrl);
+      }
+
+      init();
+
+      var headerModule = (function (h) {
+
+        $('#header-search').on('click', function() {
+          tips($('#login-form'));
+        })
+
+        return h;
+      })(window.headerModule || {});
+
+      var navModule = (function (n) {
+        $('.nav-item').on('click', function () {
+          tips($('#login-form'));
+        })
+        return n;
+      })(window.navModule || {});
+
+      var loginMoudle = (function (l) {
+        var $personalCount = $('#personal-count');
+        var $personalKeyword = $('#personal-keyword');
+
+        l._focus = function (el) {
+          el.on('focus', function () {
+            if (el.val() == '') {
+              $(this).addClass('l-input-active');
+              $(this).siblings('label').addClass('l-label-active');
+              $(this).parent().siblings('.left-block').addClass('left-block-active');
+            }
+          })
+        }
+
+        l._blur = function (el) {
+          el.on('blur', function () {
+            if (el.val() == '') {
+              $(this).removeClass('l-input-active');
+              $(this).siblings('label').removeClass('l-label-active');
+              $(this).parent().siblings('.left-block').removeClass('left-block-active');
+            }
+          })
+        }
+
+        l.init = function () {
+          // 注册事件
+          l._focus($personalCount);
+          l._blur($personalCount);
+          l._focus($personalKeyword);
+          l._blur($personalKeyword);
+          // 图片懒加载
+          layui.flow.lazyimg();
+        }
+
+        layui.form.on('submit(forSubmit)', function (data) {
+          var requestData = JSON.stringify(data.field);
+          var requestUrl = baseUrl + 'login';
+          console.log(requestData);
+          if (requestData) {
+            $.ajax({
+              type: 'post',
+              url: requestUrl,
+              cache: false,
+              xhrFields: {
+                "widthCredentials": true
+              },
+              headers: {
+                "Content-Type": "application/json;charset=utf-8"
+              },
+              data: requestData,
+              success: function (res) {
+                console.log(res);
+                if (res.code === ERR_OK) {
+                  layui.data('login_info', {
+                    key: 'access_token',
+                    value: res.data.access_token
+                  });
+                  layui.data('login_info', {
+                    key: 'user',
+                    value: res.data.user
+                  });
+                  window.location.href = './' + fromPage + '.html';
+                } else {
+                  layer.msg(res.msg);
+                }
+              }
+            })
+            return false;
+          }
+        })
+
+        l.init();
+
+        return l
+      })(window.loginMoudle || {});
+
+      headerModule = navModule = loginMoudle = null
+    })
+  })
+</script>
+</html>
