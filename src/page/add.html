@@ -6,7 +6,268 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>掌玉宝|添加玉石</title>
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../layui/css/layui.css">
+  <link rel="stylesheet" href="../common/style/base.css">
+  <link rel="stylesheet" href="../common/style/header.css">
+  <link rel="stylesheet" href="../common/style/nav.css?id=1">
+  <link rel="stylesheet" href="../common/style/footer.css">
 </head>
+<style>
+  iframe{
+    width: 100%;
+    min-height: 1100px;
+  }
+
+  .main-content{
+    position: relative;
+    padding-top: 128px;
+    background-color: #F9F9FA;
+  }
+</style>
 <body>
+  <section class="layui-main">
+    <!--header -->
+    <section class="header box-sizing">
+      <div class="title">
+        <!--<image class="logo" src=""></image>-->
+        <div class="layui-inline title-one">掌玉宝</div>
+        <div class="layui-inline title-two">交易平台</div>
+      </div>
+      <div class="header-right layui-hide-sm layui-show-md-block layui-show-lg-block">
+        <div class="search-box">
+          <i class="layui-icon cancle-icon layui-hide" id="header-cancle">&#x1006;</i>
+          <input type="text" id="header-search-input" class="layui-inline search-input layui-hide" placeholder="搜索商品编号或者分类名称">
+          <i class="layui-icon search-icon" id="header-search">&#xe615;</i>
+        </div>
+
+        <div class="my-count">
+          <div class="count" id="count">我的账户</div>
+          <div class="exit-box" id="exit" style="display: none;">
+            <div class="exit">退出</div>
+            <div class="triangle"></div>
+          </div>
+        </div>
+
+        <div class="lan">
+          <div class="layui-inline lan-active " id="Chinese">中文</div>
+          <div class="layui-inline lan-active"> /</div>
+          <div class="layui-inline" id="English">English</div>
+        </div>
+      </div>
+    </section>
+
+    <!--navbar-->
+    <section class="nav">
+      <ul class="nav-box">
+        <li class="nav-item" data-page="index">
+          首页
+        </li>
+        <li class="nav-item" data-page="list">
+          玉石列表
+        </li>
+        <li class="nav-item nav-active" data-page="add">
+          添加玉石
+        </li>
+        <li class="nav-item" data-page="contact">
+          联系方式
+        </li>
+      </ul>
+    </section>
+
+    <!--put body-->
+    <section class="main-content" id="add-body">
+
+    </section>
+
+    <!--footer-->
+    <section class="footer">
+      <div class="layui-row">
+        <div class="footer-box layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 box-sizing">
+          <h3 class="footer-title">掌玉宝</h3>
+          <div class="footer-desc layui-row">
+            <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+              掌玉宝 是一个提供原石、切割后毛料、成品场外交易的平台，我们致力于让玉石更加全面、更详细的展现在平台。
+            </div>
+          </div>
+        </div>
+        <div class="footer-box layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 box-sizing">
+          <h3 class="footer-title">联系</h3>
+          <div class="footer-desc layui-row">
+            <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+              <div class="footer-info">电话：13622334451</div>
+              <div class="footer-info">邮箱：mapleparking@talking.com</div>
+            </div>
+            <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+              <div class="footer-info">网址：www.mapleparking.com</div>
+              <div class="footer-info">地址：广东省佛山市XXXX号缅甸玉石交易中心</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-icp">
+        沪ICP备 16019295号 版权所有 ©mapleparking.com
+      </div>
+    </section>
+
+  </section>
 </body>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script type="text/javascript" src="../libs/plugin.js"></script>
+<script>
+  $(function(){
+    layui.use(['layer', 'form', 'flow', 'laytpl'], function(){
+      var layer = layui.layer,
+        form = layui.form,
+        flow = layui.flow,
+        laytpl = layui.laytpl;
+
+      var CURRENT_PAGE = 'list';
+
+      var ERR_OK = 0;
+
+      var fromPage, isLog, baseUrl, token, history_data;
+
+      var init = function () {
+        fromPage = getParamValue('from') || 'index';
+        token = layui.data('login_info').access_token;
+        isLog = returnLoginState(token);
+        baseUrl = returnBaseUrl();
+        history_data = layui.data('history').history_data;
+        if (!history_data) {
+          history_data = {
+            "title": "最近搜索",
+            "list" : []
+          }
+          layui.data('history', {
+            key: 'history_data',
+            value: history_data
+          })
+        }
+      }
+
+      init();
+
+      var headerModule = (function (h) {
+        var $count = h.$count = $('#count');
+        var $exit = h.$exit = $('#exit');
+        var $headerSearch = h.$headerSearch = $('#header-search');
+        var $headerCancle = h.$headerCancle = $('#header-cancle');
+        var $headerSearchInput = h.$headerSearchInput = $('#header-search-input');
+
+        h.init = function () {
+          if (!isLog) {
+            $count.html('登录');
+            layer.tips('您还未登录您的账号，请先登录', $count, {
+              tips: [1, '#000000'],
+              time: 4000
+            });
+            return;
+          } else {
+            $count.html('我的账户');
+          }
+        }
+
+        $count.on('click', function () {
+          if (isLog) {
+            $exit.toggle();
+          } else {
+            window.location.href = './login.html?from=' + CURRENT_PAGE;
+          }
+        })
+
+        $exit.on('click', function () {
+          layui.data('login_info',null);
+          window.location.href = './login.html?from=' + CURRENT_PAGE;
+        })
+
+        $headerSearch.on('mousedown', function() {
+          if ($headerSearchInput.val() != '') {
+            var h_list = history_data.list;
+            h_list.unshift($headerSearchInput.val());
+            h_list = h_list.splice(0,10);
+            history_data.list = h_list;
+            console.log(h_list);
+            layui.data('history', {
+              key: 'history_data',
+              value: history_data
+            })
+            $headerSearchInput.val('');
+          }
+          $headerSearchInput.val('');
+          $(this).parent('.search-box').width(285);
+          $(this).siblings('input,i').removeClass('layui-hide');
+          $(this).css('left','255px');
+          $('.my-count, .lan').addClass('layui-hide');
+        })
+
+        $headerCancle.on('click', function() {
+          $(this).parent('.search-box').width(0);
+          $(this).addClass('layui-hide').siblings('input').addClass('layui-hide');
+          $headerSearch.css('left','0');
+          $headerSearchInput.val('');
+          $('.my-count, .lan').removeClass('layui-hide');
+        })
+
+        $headerSearchInput.on('focus',function() {
+          $(this).attr('placeholder', '');
+        }).on('keyup', function(e) {
+          var e = e || window.event;
+          if (e.keyCode === 13) {
+            $(this).blur();
+            var currentValue = $(this).val();
+            if (currentValue == '') {
+              return;
+            }
+            var h_list = history_data.list;
+            h_list.unshift($(this).val());
+            h_list = h_list.splice(0,10);
+            history_data.list = h_list;
+            console.log(h_list);
+            layui.data('history', {
+              key: 'history_data',
+              value: history_data
+            })
+            $(this).val('');
+          }
+        }).on('blur', function(e) {
+          $(this).attr('placeholder', '搜索商品编号或者分类名称');
+        })
+
+        h.init();
+
+        return h;
+      })(window.headerModule || {});
+
+      var navModule = (function (n) {
+        $('.nav-item').on('click', function () {
+          if ($(this).hasClass('nav-active')) {
+            return;
+          }
+          var gotoPage = $(this).attr('data-page');
+          window.location.href = './'+ gotoPage + '.html';
+        })
+        return n;
+      })(window.navModule || {});
+
+      var addModule = (function(a){
+        var _type = getParamValue('type') || 1; // 默认添加原石
+
+        // a.changeHeight = function(){
+        //   $('#step-iframe').height($(document).height());
+        // }
+
+        a.init = function () {
+          $('#add-body').html(
+            '<iframe class="box-sizing" scrolling="no" frameborder="0" id="step-iframe" src="step-one.html?type='+ _type +'"></iframe>'
+          );
+        }
+
+        a.init();
+
+        return a;
+      })(window.addModule || {});
+    })
+  })
+</script>
 </html>

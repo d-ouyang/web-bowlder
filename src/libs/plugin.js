@@ -72,6 +72,25 @@ function goSearch(el, val, callback) {
   })
 }
 
+function requestPut(url, token, data, cb){
+  $.ajax({
+    type:'put',
+    url: url,
+    cache: false,
+    xhrFields: {
+      "widthCredentials": true
+    },
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      "access_token": token
+    },
+    data: data,
+    success: function (res) {
+      typeof cb && cb(res);
+    }
+  })
+}
+
 function requestGet(url, token, cb) {
   $.ajax({
     type: 'get',
