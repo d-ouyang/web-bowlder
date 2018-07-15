@@ -33,7 +33,7 @@ function returnType (typeId) {
   if (typeId == 1) {
     return '原石'
   } else if (typeId == 2) {
-    return '毛料'
+    return '切料'
   } else if (typeId == 3) {
     return  '成品'
   }

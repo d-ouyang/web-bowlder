@@ -16,7 +16,7 @@
 <style>
   iframe{
     width: 100%;
-    min-height: 1100px;
+    min-height: 1050px;
   }
 
   .main-content{
@@ -252,6 +252,7 @@
 
       var addModule = (function(a){
         var _type = getParamValue('type') || 1; // 默认添加原石
+        var number = getParamValue('number') || ''; // 默认为空字符串
 
         // a.changeHeight = function(){
         //   $('#step-iframe').height($(document).height());
@@ -259,7 +260,7 @@
 
         a.init = function () {
           $('#add-body').html(
-            '<iframe class="box-sizing" scrolling="no" frameborder="0" id="step-iframe" src="step-one.html?type='+ _type +'"></iframe>'
+            '<iframe class="box-sizing" scrolling="no" frameborder="0" id="step-iframe" src="step-two.html?type='+ _type +'&number='+ number +'"></iframe>'
           );
         }
 
