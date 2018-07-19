@@ -217,9 +217,6 @@
       <li class="nav-item" data-page="add">
         添加玉石
       </li>
-      <li class="nav-item" data-page="contact">
-        联系方式
-      </li>
     </ul>
   </section>
 
@@ -317,7 +314,8 @@
 
       var CURRENT_PAGE = 'list';
 
-      var ERR_OK = 0;
+      const ERR_OK = 0;
+      const IMAGE_BASE = 'http://47.52.105.7/';
 
       var fromPage, isLog, baseUrl, token, history_data;
 
@@ -348,6 +346,8 @@
         var $headerCancle = h.$headerCancle = $('#header-cancle');
         var $headerSearchInput = h.$headerSearchInput = $('#header-search-input');
 
+        $exit.hide();
+
         h.init = function () {
           if (!isLog) {
             $count.html('登录');
@@ -375,19 +375,13 @@
         })
 
         $headerSearch.on('mousedown', function() {
-          if ($headerSearchInput.val() != '') {
-            var h_list = history_data.list;
-            h_list.unshift($headerSearchInput.val());
-            h_list = h_list.splice(0,10);
-            history_data.list = h_list;
-            console.log(h_list);
-            layui.data('history', {
-              key: 'history_data',
-              value: history_data
-            })
+          var currentValue = $headerSearchInput.val();
+          if (currentValue != '') {
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
             $headerSearchInput.val('');
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
-          $headerSearchInput.val('');
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
           $(this).css('left','255px');
@@ -412,16 +406,12 @@
             if (currentValue == '') {
               return;
             }
-            var h_list = history_data.list;
-            h_list.unshift($(this).val());
-            h_list = h_list.splice(0,10);
-            history_data.list = h_list;
-            console.log(h_list);
-            layui.data('history', {
-              key: 'history_data',
-              value: history_data
-            })
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
+            console.log(layui.data('history').history_data);
             $(this).val('');
+            $(this).attr('placeholder','搜索商品编号或者分类名称');
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
         }).on('blur', function(e) {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
@@ -456,7 +446,7 @@
               '<li class="main-list-item box-sizing" data-number="'+ item.serialNumber +'" data-type="'+ item.type +'" data-id="'+ item.id +'">'+
               '<div class="item-left">'+
               '<div class="item-img-wrapper">'+
-              '<img lay-src="'+ item.image +'">'+
+              '<img lay-src="'+ IMAGE_BASE + item.image.split(',')[0] +'">'+
               '</div>'+
               '<div class="item-info">'+
               '<div class="item-info-title">' + item.name + '</div>'+
@@ -523,7 +513,8 @@
         //注册点击 原石、切料、成品 事件
         $('.list-header-item').on('click', function () {
           var tarIndex = $(this).index();
-          window.open('./results.html?from=' + CURRENT_PAGE + '&type=' + (tarIndex+1));
+          window.location.href = './results.html?from=' + CURRENT_PAGE + '&type=' + (tarIndex+1);
+          // window.open('./results.html?from=' + CURRENT_PAGE + '&type=' + (tarIndex+1));
         })
 
         function flowLoad() {

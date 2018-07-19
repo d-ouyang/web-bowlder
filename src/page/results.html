@@ -118,6 +118,12 @@
     font-size: 12px;
     padding-top: 20px;
     margin-bottom: 18px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .result-content-title span{
+    cursor: pointer;
   }
 
   .main-list-item{
@@ -207,7 +213,6 @@
     background-color: #000;
   }
 
-
   /*分页*/
   .laypage-box {
     width: 100%;
@@ -253,7 +258,6 @@
   <!--header -->
   <section class="header box-sizing">
     <div class="title">
-      <image src=""></image>
       <div class="layui-inline title-one">掌玉宝</div>
       <div class="layui-inline title-two">交易平台</div>
     </div>
@@ -292,9 +296,6 @@
       </li>
       <li class="nav-item" data-page="add">
         添加玉石
-      </li>
-      <li class="nav-item" data-page="contact">
-        联系方式
       </li>
     </ul>
   </section>
@@ -346,7 +347,11 @@
         <div id="search-results">
         <script type="text/html" id="script-search-results">
           <div class="result-content-title">
-            "{{ d.searchVal }}" 相关结果 {{ d.counts }}
+            {{#if (d.isType) { }}
+              <span class="backPage">{{d.title.first}}</span> &nbsp;&nbsp;&gt;&nbsp;&nbsp; <span class="reSearch">{{d.title.second}}</span>
+            {{# } else { }}
+              "{{d.title.first}}" 相关结果 {{d.title.second}}
+            {{#} }}
           </div>
           <ul class="main-list">
             {{# layui.each(d.list, function(index, item) { }}
@@ -436,16 +441,35 @@
         laypage = layui.laypage,
         laytpl = layui.laytpl;
 
-      var CURRENT_PAGE = 'results';
+      const CURRENT_PAGE = 'results';
 
-      var fromPage, isLogin, typeId, VALUE;
+      const ERR_OK = 0;
+      const IMAGE_BASE = 'http://47.52.105.7/';
+
+      var baseUrl = returnBaseUrl();
+
+      var initValue = '';
+      var fromPage, isLog, baseUrl, token, history_data, currentType, currentValue;
 
       var init = function () {
         fromPage = getParamValue('from');
-        typeId = getParamValue('type');
-        isLogin = returnLoginState();
-        VALUE = returnType(typeId);
-      };
+        currentType = getParamValue('type');
+        currentValue = decodeURIComponent(getParamValue('value'));
+        token = layui.data('login_info').access_token;
+        isLog = returnLoginState(token);
+        baseUrl = returnBaseUrl();
+        history_data = layui.data('history').history_data;
+        if (!history_data) {
+          history_data = {
+            "title": "最近搜索",
+            "list" : []
+          }
+          layui.data('history', {
+            key: 'history_data',
+            value: history_data
+          })
+        }
+      }
 
       init();
 
@@ -456,8 +480,10 @@
         var $headerCancle = h.$headerCancle = $('#header-cancle');
         var $headerSearchInput = h.$headerSearchInput = $('#header-search-input');
 
+        $exit.hide();
+
         h.init = function () {
-          if (!isLogin) {
+          if (!isLog) {
             $count.html('登录');
             layer.tips('您还未登录您的账号，请先登录', $count, {
               tips: [1, '#000000'],
@@ -470,7 +496,7 @@
         }
 
         $count.on('click', function () {
-          if (isLogin) {
+          if (isLog) {
             $exit.toggle();
           } else {
             window.location.href = './login.html?from=' + CURRENT_PAGE;
@@ -478,44 +504,52 @@
         })
 
         $exit.on('click', function () {
+          layui.data('login_info',null);
           window.location.href = './login.html?from=' + CURRENT_PAGE;
         })
 
-        $headerSearch.on('click', function () {
-          if ($headerSearchInput.val() != '') {
-            console.log($headerSearchInput.val());
-            resultMoudle.$resultHeaderInput.val($headerSearchInput.val());
+        $headerSearch.on('mousedown', function() {
+          var currentValue = $headerSearchInput.val();
+          if (currentValue != '') {
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
             $headerSearchInput.val('');
+            resultMoudle.$resultHeaderInput.val(currentValue);
+            // window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
-          $(this).css('left', '255px');
+          $(this).css('left','255px');
           $('.my-count, .lan').addClass('layui-hide');
         })
 
-        $headerCancle.on('click', function () {
+        $headerCancle.on('click', function() {
           $(this).parent('.search-box').width(0);
           $(this).addClass('layui-hide').siblings('input').addClass('layui-hide');
-          $headerSearch.css('left', '0');
+          $headerSearch.css('left','0');
           $headerSearchInput.val('');
           $('.my-count, .lan').removeClass('layui-hide');
         })
 
-        $headerSearchInput.on('focus', function () {
+        $headerSearchInput.on('focus',function() {
           $(this).attr('placeholder', '');
-        }).on('keyup', function (e) {
+        }).on('keyup', function(e) {
           var e = e || window.event;
           if (e.keyCode === 13) {
             $(this).blur();
-            if ($(this).val() != '') {
-              console.log($(this).val());
-              resultMoudle.$resultHeaderInput.val($(this).val());
-              $(this).val('')
-            } else {
+            var currentValue = $(this).val();
+            if (currentValue == '') {
               return;
             }
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
+            console.log(layui.data('history').history_data);
+            $(this).val('');
+            $(this).attr('placeholder','搜索商品编号或者分类名称');
+            resultMoudle.$resultHeaderInput.val(currentValue);
+            // window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
-        }).on('blur', function () {
+        }).on('blur', function(e) {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
         })
 
@@ -533,9 +567,6 @@
         })
 
         $('.nav-item').on('click', function () {
-          // if ($(this).hasClass('nav-active')) {
-          //   return;
-          // }
           var gotoPage = $(this).attr('data-page');
           window.location.href = './' + gotoPage + '.html';
         })
@@ -543,25 +574,57 @@
       })(window.navModule || {});
 
       var resultMoudle = (function (r) {
+        r.typeBool = null;
+        if (currentType) {
+          r.typeBool = true;
+          initValue = returnType(currentType);
+        } else {
+          r.typeBool = false;
+          initValue = currentValue;
+        }
+
         var $resultHeaderInput = r.$resultHeaderInput = $('.result-header-input');
-        $resultHeaderInput.val(VALUE);
+
+        $resultHeaderInput.val(initValue);
         goSearch($resultHeaderInput, '搜索商品编号或者分类名称');
 
         // 分页列表模板渲染公共函数
         function renderList(data, gethtml, el) {
           laytpl(gethtml).render(data, function(html) {
-            el.html(html).on('click', function(e) {
-              var e = e || window.event;
-              var target = e.target || e.srcElement;
-              console.log(target);
-            });
+            el.html(html);
+            var $resultContentTitle = el.find('.result-content-title');
+            $resultContentTitle.find('.backPage').on('click',function(){
+              console.log($(this).text());
+            })
+            $resultContentTitle.find('.reSearch').on('click',function(){
+              console.log($(this).text());
+            })
+            var $mainList = el.find('.main-list');
+            $mainList.find('li').on('click',function(){
+              currentType = $(this).attr('data-type');
+              console.log($(this));
+              window.open('./detail.html?from=' + fromPage + '&type=' + currentType + '&number=');
+            })
+            $mainList.find('.item-edit').on('click',function(){
+              console.log($(this));
+            })
           })
         }
 
-        var loadData = {
-          searchVal: 'WAN',
-          counts: 25000,
-          list: [
+        function initLoadData() {
+          var loadData = {};
+          if (r.typeBool) {
+            loadData.isType = true;
+            loadData.title = {};
+            loadData.title.first = returnPage(fromPage);
+            loadData.title.second = returnType(currentType);
+          } else {
+            loadData.isType = false;
+            loadData.title = {};
+            loadData.title.first = currentValue;
+            loadData.title.second = 25000;
+          }
+          loadData.list = [
             {
               id: '17356538',
               code:'2018061501',
@@ -625,11 +688,13 @@
               date: '2018/06/23 16:03',
               title:'绿宝石戒指碎钻P1-4xxx/20180614'
             }
-          ]
-        };
+          ];
+          return loadData;
+        }
 
         var gethtml = $('#script-search-results').html();
         var $searchResults = $('#search-results');
+        var loadData = initLoadData();
 
         renderList(loadData,gethtml,$searchResults);
 

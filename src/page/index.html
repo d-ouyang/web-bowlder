@@ -387,9 +387,6 @@
       <li class="nav-item" data-page="add">
         添加玉石
       </li>
-      <li class="nav-item" data-page="contact">
-        联系方式
-      </li>
     </ul>
   </section>
 
@@ -447,7 +444,7 @@
               <img lay-src="../common/images/cropping@3x.png" alt="">
             </div>
             <div class="item-title">
-              毛料
+              切料
             </div>
             <div class="item-English">
               More than expected
@@ -499,7 +496,7 @@
 
                 {{# layui.each(d, function (index, item) { }}
                 <li class="new-item" data-type="{{item.type}}" data-number="{{item.serialNumber}}">
-                  <img lay-src="{{item.image}}">
+                  <img lay-src="{{item.src}}">
                   <div class="info-box box-sizing">
                       <div class="code">编号：{{item.serialNumber}}</div>
                     {{# if(item.type == 1){ }}
@@ -563,7 +560,7 @@
 </section>
 </body>
 <script type="text/javascript" src="../layui/layui.js"></script>
-<script type="text/javascript" src="../libs/plugin.js"></script>
+<script type="text/javascript" src="../libs/plugin.js?id=20"></script>
 <script type="text/javascript">
   $(function () {
     layui.use(['layer', 'form', 'laytpl', 'flow', 'laypage'], function () {
@@ -575,7 +572,8 @@
 
       var CURRENT_PAGE = 'index';
 
-      var ERR_OK = 0;
+      const ERR_OK = 0;
+      const IMAGE_BASE = 'http://47.52.105.7/';
 
       var fromPage, isLog, baseUrl, token, history_data;
 
@@ -635,19 +633,13 @@
         })
 
         $headerSearch.on('mousedown', function() {
-          if ($headerSearchInput.val() != '') {
-            var h_list = history_data.list;
-            h_list.unshift($headerSearchInput.val());
-            h_list = h_list.splice(0,10);
-            history_data.list = h_list;
-            console.log(h_list);
-            layui.data('history', {
-              key: 'history_data',
-              value: history_data
-            })
+          var currentValue = $headerSearchInput.val();
+          if (currentValue != '') {
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
             $headerSearchInput.val('');
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
-          $headerSearchInput.val('');
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
           $(this).css('left','255px');
@@ -672,16 +664,12 @@
             if (currentValue == '') {
               return;
             }
-            var h_list = history_data.list;
-            h_list.unshift($(this).val());
-            h_list = h_list.splice(0,10);
-            history_data.list = h_list;
-            console.log(h_list);
-            layui.data('history', {
-              key: 'history_data',
-              value: history_data
-            })
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
+            console.log(layui.data('history').history_data);
             $(this).val('');
+            $(this).attr('placeholder','搜索商品编号或者分类名称');
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
         }).on('blur', function(e) {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
@@ -738,6 +726,10 @@
               renderLaypage(data.data.totalElements, h.currentPage);
             }
             currentPageData = data.data.content;
+            for (var i in currentPageData) {
+              currentPageData[i].src = IMAGE_BASE + currentPageData[i].image.split(',')[0];
+            }
+            console.log(currentPageData);
             renderModel(gethtml, currentPageData, $listBox, function() {
               $('.new-item').on('click', function() {
                 console.log($(this));
@@ -792,13 +784,14 @@
           //注册点击 原石、切料、成品 事件
           $('.kind-item').on('click', function () {
             var tarIndex = $(this).index();
-            window.open('./results.html?from=' + CURRENT_PAGE + '&type=' + (tarIndex+1));
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&type=' + (tarIndex+1);
           })
 
           // 搜索
           $('#home-input').on('focus',function() {
             var that = this;
             history_data = layui.data('history').history_data;
+            console.log(history_data);
             $(this).attr('placeholder','');
             $('.home-history-search').removeClass('layui-hide');
             renderModel(getTpl, history_data, $historyList, function () {
@@ -806,9 +799,12 @@
                 var e = e || window.event;
                 var target = e.target || e.srcElement;
                 if (target.nodeName.toLowerCase() == 'li') {
-                  console.log($(target).text());
-                  $(that).val($(target).text());
+                  var _text = $(target).text();
+                  var _index = $(target).index();
+                  $(that).val(_text);
                   $('.home-history-search').addClass('layui-hide');
+                  resetHistoryData(history_data, _text, _index);
+                  console.log(layui.data('history').history_data);
                 }
               });
             });
@@ -820,22 +816,29 @@
               if (currentValue == '') {
                 return;
               }
-              var h_list = history_data.list;
-              h_list.unshift($(this).val());
-              h_list = h_list.splice(0,10);
-              history_data.list = h_list;
-              console.log(h_list);
-              layui.data('history', {
-                key: 'history_data',
-                value: history_data
-              })
+              history_data = layui.data('history').history_data;
+              resetHistoryData(history_data, currentValue);
+              console.log(layui.data('history').history_data);
               $(this).val('');
               $(this).attr('placeholder','搜索商品编号或者分类名称');
+              window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
             }
           }).on('blur',function(e) {
             var e = e || window.event;
             $(this).attr('placeholder','搜索商品编号或者分类名称');
             $('.home-history-search').addClass('layui-hide');
+          })
+
+          $('#home-input').next('i').on('click',function(){
+            var currentValue = $(this).prev().val();
+            console.log(currentValue);
+            if (currentValue == '') {
+              return;
+            }
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
+            console.log(layui.data('history').history_data);
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           })
 
           // 请求数据

@@ -570,14 +570,15 @@
         laypage = layui.laypage,
         laytpl = layui.laytpl;
 
-      var CURRENT_PAGE = 'detail';
+      // var CURRENT_PAGE = 'detail';
 
       var ERR_OK = 0;
 
-      var fromPage, isLog, baseUrl, token, history_data;
+      var fromPage, isLog, baseUrl, token, history_data, CURRENT_PAGE;
 
       var init = function () {
         fromPage = getParamValue('from') || 'index';
+        CURRENT_PAGE = fromPage;
         token = layui.data('login_info').access_token;
         isLog = returnLoginState(token);
         baseUrl = returnBaseUrl();
@@ -603,6 +604,8 @@
         var $headerCancle = h.$headerCancle = $('#header-cancle');
         var $headerSearchInput = h.$headerSearchInput = $('#header-search-input');
 
+        $exit.hide();
+
         h.init = function () {
           if (!isLog) {
             $count.html('登录');
@@ -625,44 +628,50 @@
         })
 
         $exit.on('click', function () {
+          layui.data('login_info',null);
           window.location.href = './login.html?from=' + CURRENT_PAGE;
         })
 
-        $headerSearch.on('click', function () {
-          if ($headerSearchInput.val() != '') {
-            console.log($headerSearchInput.val());
-            resultMoudle.$resultHeaderInput.val($headerSearchInput.val());
+        $headerSearch.on('mousedown', function() {
+          var currentValue = $headerSearchInput.val();
+          if (currentValue != '') {
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
             $headerSearchInput.val('');
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
-          $(this).css('left', '255px');
+          $(this).css('left','255px');
           $('.my-count, .lan').addClass('layui-hide');
         })
 
-        $headerCancle.on('click', function () {
+        $headerCancle.on('click', function() {
           $(this).parent('.search-box').width(0);
           $(this).addClass('layui-hide').siblings('input').addClass('layui-hide');
-          $headerSearch.css('left', '0');
+          $headerSearch.css('left','0');
           $headerSearchInput.val('');
           $('.my-count, .lan').removeClass('layui-hide');
         })
 
-        $headerSearchInput.on('focus', function () {
+        $headerSearchInput.on('focus',function() {
           $(this).attr('placeholder', '');
-        }).on('keyup', function (e) {
+        }).on('keyup', function(e) {
           var e = e || window.event;
           if (e.keyCode === 13) {
             $(this).blur();
-            if ($(this).val() != '') {
-              console.log($(this).val());
-              resultMoudle.$resultHeaderInput.val($(this).val());
-              $(this).val('')
-            } else {
+            var currentValue = $(this).val();
+            if (currentValue == '') {
               return;
             }
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
+            console.log(layui.data('history').history_data);
+            $(this).val('');
+            $(this).attr('placeholder','搜索商品编号或者分类名称');
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
-        }).on('blur', function () {
+        }).on('blur', function(e) {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
         })
 

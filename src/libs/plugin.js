@@ -39,6 +39,16 @@ function returnType (typeId) {
   }
 }
 
+function returnPage (str) {
+  if (str == 'index') {
+    return '首页'
+  } else if (str == 'list') {
+    return '玉石列表'
+  } else if (str == 'add') {
+    return '添加玉石'
+  }
+}
+
 function returnLoginState (token) {
   var isLogin = token ? true : false;
 
@@ -106,5 +116,29 @@ function requestGet(url, token, cb) {
     success: function (res) {
       typeof cb && cb(res);
     }
+  })
+}
+
+function resetHistoryData(data, text, index){
+  var _list = data.list;
+  if (index === undefined) {
+    for (var i in _list) {
+      if (_list[i] === text) {
+        _list.splice(i, 1);
+        break;
+      } else {
+        continue;
+      }
+    }
+  } else {
+    _list.splice(index, 1);
+  }
+  _list.unshift(text);
+  _list = _list.slice(0,10);
+  console.log(_list);
+  data.list = _list;
+  layui.data('history', {
+    key: 'history_data',
+    value: data
   })
 }

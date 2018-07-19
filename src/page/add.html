@@ -69,9 +69,6 @@
         <li class="nav-item nav-active" data-page="add">
           添加玉石
         </li>
-        <li class="nav-item" data-page="contact">
-          联系方式
-        </li>
       </ul>
     </section>
 
@@ -155,6 +152,8 @@
         var $headerCancle = h.$headerCancle = $('#header-cancle');
         var $headerSearchInput = h.$headerSearchInput = $('#header-search-input');
 
+        $exit.hide();
+
         h.init = function () {
           if (!isLog) {
             $count.html('登录');
@@ -182,19 +181,13 @@
         })
 
         $headerSearch.on('mousedown', function() {
-          if ($headerSearchInput.val() != '') {
-            var h_list = history_data.list;
-            h_list.unshift($headerSearchInput.val());
-            h_list = h_list.splice(0,10);
-            history_data.list = h_list;
-            console.log(h_list);
-            layui.data('history', {
-              key: 'history_data',
-              value: history_data
-            })
+          var currentValue = $headerSearchInput.val();
+          if (currentValue != '') {
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
             $headerSearchInput.val('');
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
-          $headerSearchInput.val('');
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
           $(this).css('left','255px');
@@ -219,16 +212,12 @@
             if (currentValue == '') {
               return;
             }
-            var h_list = history_data.list;
-            h_list.unshift($(this).val());
-            h_list = h_list.splice(0,10);
-            history_data.list = h_list;
-            console.log(h_list);
-            layui.data('history', {
-              key: 'history_data',
-              value: history_data
-            })
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
+            console.log(layui.data('history').history_data);
             $(this).val('');
+            $(this).attr('placeholder','搜索商品编号或者分类名称');
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
           }
         }).on('blur', function(e) {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
@@ -252,15 +241,10 @@
 
       var addModule = (function(a){
         var _type = getParamValue('type') || 1; // 默认添加原石
-        var number = getParamValue('number') || ''; // 默认为空字符串
-
-        // a.changeHeight = function(){
-        //   $('#step-iframe').height($(document).height());
-        // }
 
         a.init = function () {
           $('#add-body').html(
-            '<iframe class="box-sizing" scrolling="no" frameborder="0" id="step-iframe" src="step-two.html?type='+ _type +'&number='+ number +'"></iframe>'
+            '<iframe class="box-sizing" scrolling="no" frameborder="0" id="step-iframe" src="step-one.html?type='+ _type +'"></iframe>'
           );
         }
 
