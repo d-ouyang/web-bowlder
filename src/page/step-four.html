@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>第四步</title>
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../layui/css/layui.css">
+  <link rel="stylesheet" href="../common/style/base.css">
+</head>
+<style>
+  .step{
+    width: 100%;
+    min-width: 1190px;
+    padding: 0 125px;
+  }
+  .step-body{
+    width: 100%;
+    padding-top: 22px;
+  }
+  .step-header{
+    width: 100%;
+    height: 130px;
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 0 118px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .step-tag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 15px;
+    color: #838D8F;
+  }
+  .step-tag span{
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 13px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 34px;
+    background-color: #F7F7F7;
+  }
+  .step-active span{
+    background-color: #85D78D;
+    color: #fff;
+  }
+  .step-active p{
+    color: #2F2F33;
+  }
+  .line{
+    width: 170px;
+    border-top: 1px solid #ccc;
+    padding-top: 30px;
+  }
+
+  .put-box{
+    width: 100%;
+    border-radius: 4px;
+    background-color: #fff;
+  }
+  .put-box-header{
+    width: 100%;
+    height: 78px;
+    border-bottom: 1px solid #eee;
+    padding-left: 40px;
+    line-height: 78px;
+    font-size: 22px;
+    color: #3A3D3F;
+    font-weight: bold;
+  }
+  .put-box-content{
+    padding: 20px 50px 50px 40px;
+    min-height: 577px;
+  }
+  .layui-form-item{
+    clear: none;
+  }
+  .layui-form-item label{
+    font-size: 12px;
+    color: #3C3D41;
+    line-height: 36px;
+  }
+
+  .item-left{
+    width: 45%;
+    float: left;
+  }
+  .item-right{
+    width: 45%;
+    float: right;
+  }
+
+  .upload{
+    height: 577px;
+    padding-right: 40px;
+  }
+
+  .drag-upload{
+    position: relative;
+    width: 100%;
+    height: 377px;
+    overflow-y: auto;
+    cursor: pointer;
+    border: 2px dashed #9B9B9B;
+    background-color: #fff;
+    font-size: 16px;
+    color: #CCCCCC;
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  .drag-upload:hover{
+    border-color: #1272FA;
+    background-color: #E2EEFC;
+  }
+
+  .drag-upload:hover .drag-flag{
+    color: #fff;
+  }
+
+  .img-box{
+    float: left;
+    width: 97px;
+    height: 97px;
+    background-color: #FFF;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  .img-box:nth-of-type(4n){
+    margin-right: 0;
+  }
+
+  .img-wrapper{
+    position: relative;
+    width: 97px;
+    height: 97px;
+  }
+  .img-item{
+    width: 97px;
+    height: 97px;
+    vertical-align: baseline;
+  }
+  /*重新上传按钮*/
+  #reuploadIcon{
+    position: absolute;
+    font-size: 30px;
+    display: inline-block;
+    width: 97px;
+    height: 97px;
+    line-height: 97px;
+    text-align: center;
+    left: 0;
+    top: 0;
+    background-color: rgba(255,255,255,0.8);
+    color: #1272FA;
+  }
+  /*删除按钮*/
+  #deleteIcon{
+    position: absolute;
+    font-size: 20px;
+    color: #F4281B;
+    right: 0px;
+    top: 0px;
+  }
+
+
+  .drag-flag{
+    position: absolute;
+    top: 180px;
+  }
+
+  .btn-upload{
+    text-align: center;
+  }
+  .btn-upload button{
+    width: 210px;
+    height: 50px;
+    line-height: 50px;
+    background-color: #2F2F33;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .btn-grounp{
+    margin-top: 80px;
+    text-align: center;
+  }
+  .btn-grounp button{
+    width: 320px;
+    height: 60px;
+    font-size: 18px;
+    line-height: 60px;
+    border-radius: 6px;
+    background-color: #85D78D;
+  }
+
+</style>
+<body>
+<section id="step-one" class="step step-one box-sizing">
+  <div class="step-body transx50">
+    <div class="step-header step-one-header box-sizing">
+      <div class="step-active step-tag">
+        <span><i class="layui-icon">&#xe605;</i></span>
+        <p>基础信息</p>
+      </div>
+      <div class="line"></div>
+      <div class="step-active step-tag">
+        <span><i class="layui-icon">&#xe605;</i></span>
+        <p>加工信息</p>
+      </div>
+      <div class="line"></div>
+      <div class="step-active step-tag">
+        <span><i class="layui-icon">&#xe605;</i></span>
+        <p>出库信息</p>
+      </div>
+      <div class="line"></div>
+      <div class="step-active step-tag">
+        <span>4</span>
+        <p>销售信息</p>
+      </div>
+    </div>
+    <div class="step-main step-one-main box-sizing">
+      <form class="layui-form" action="" lay-filter="baseInfo">
+        <div class="layui-row layui-col-space10">
+          <div class="layui-col-lg7 layui-col-md7">
+            <div class="put-box base-info-box">
+              <div class="put-box-header box-sizing">出库信息</div>
+              <div class="put-box-content box-sizing layui-clear">
+                <!--玉石类型-->
+                <div class="layui-form-item select-type-box item-left">
+                  <label>是否销售</label>
+                  <select class="select-sale" name="isSale" lay-filter="isSale">
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                  </select>
+                </div>
+                <!--出库编号-->
+                <div class="layui-form-item item-right">
+                  <label>销售玉石编号</label>
+                  <input class="layui-input outbound-input" type="text" name="serialNumber" lay-verify="required" lay-verType="tips">
+                </div>
+                <!--销售日期-->
+                <div class="layui-form-item item-right">
+                  <label style="display: block;">销售日期</label>
+                  <input style="display: inline-block;width: 80%;margin-right: 10px" placeholder="yyyy-MM-dd HH:mm:ss" id="date" class="layui-input outbound-input" type="text" name="saleTime" lay-verify="require" lay-verType="tips" style="width: 200px;display: inline-block;margin-right: 10px">
+                  <i class="layui-icon" style="font-size: 26px;vertical-align: middle">&#xe637;</i>
+                </div>
+                <!--销售地点-->
+                <div class="layui-form-item item-left">
+                  <label>销售金额</label>
+                  <input class="layui-input outbound-input" type="number" name="amount" lay-verify="number" lay-verType="tips">
+                </div>
+                <!--销售地点-->
+                <div class="layui-form-item item-left" style="width: 100%;">
+                  <label>销售地点</label>
+                  <input class="layui-input outbound-input" type="text" name="salePlace" lay-verify="required" lay-verType="tips">
+                </div>
+                <!--持有者-->
+                <div class="layui-form-item item-left">
+                  <label>持有者</label>
+                  <input class="layui-input outbound-input" type="text" name="saler" lay-verify="required" lay-verType="tips">
+                </div>
+                <!--额外信息-->
+                <div class="layui-form-item item-left" style="width: 100%;">
+                  <label>额外信息</label>
+                  <textarea placeholder="请输入内容" name="remarkText" class="layui-textarea outbound-input"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="layui-col-lg5 layui-col-md-5">
+            <div class="put-box base-img-box box-sizing">
+              <div class="put-box-header box-sizing">额外信息（图片）</div>
+              <div class="put-box-content box-sizing upload">
+                <div class="drag-upload box-sizing" id="drag">
+
+                  <div class="drag-flag transx50">
+                    <i class="layui-icon" style="font-size:26px;vertical-align: middle">&#xe681;</i>
+                    点击 / 拖拽添加图片
+                  </div>
+                </div>
+                <div class="btn-upload">
+                  <button type="button" class="layui-btn" id="upload-images">
+                    <i class="layui-icon">&#xe67c;</i> 点击上传
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-grounp">
+          <button id="next" class="layui-btn next" lay-submit lay-filter="store-next">完成并上传</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>
+</body>
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script type="text/javascript" src="../libs/plugin.js"></script>
+<script type="text/javascript">
+  $(function() {
+    layui.use(['layer', 'form', 'flow','laydate','upload', 'laytpl'],function(){
+      var layer = layui.layer,
+        form = layui.form,
+        flow = layui.flow,
+        laydate = layui.laydate,
+        upload = layui.upload,
+        laytpl = layui.laytpl;
+
+      const ERR_OK = 0;
+
+      var initValue = 1;// 默认已销售
+
+      var parentIframe = window.parent.document.getElementById("step-iframe");
+
+      var currentType = getParamValue('type');
+      var currentNumber = getParamValue('number');
+      var currentId = getParamValue('jadeId');
+      console.log(currentType,currentNumber,currentId);
+      var baseUrl = returnBaseUrl();
+      var putImagesUrl = baseUrl + 'image';
+      var putSaleInfoUrl = baseUrl + 'salesInformation';
+      var token = layui.data('login_info').access_token;
+      var user = layui.data('login_info').user;
+
+      console.log(location.href);
+
+      var stepModule = (function(s){
+        var $dragUpload = $('.drag-upload');
+        var $dragFlag = $('.drag-flag');
+
+        //处理上传前文件
+        s.handleBeforeUpload = function(index, file, result, that, obj, files, el) {
+
+          var newItem = $(
+            '<div class="img-box layui-anim layui-anim-upbit img-box-'+ index +'" data-index="'+ index +'">' +
+            '<div class="img-wrapper">' +
+            '<img class="img-item" src="'+ result +'" alt="">' +
+            '<a id="reuploadIcon" class="layui-icon layui-hide" href="javascript:;">&#xe9aa;</a>'+
+            '<a id="deleteIcon" class="layui-icon layui-hide layui-anim" href="javascript:;">&#x1007;</a>' +
+            '</div>' +
+            '</div>'
+          );
+
+          newItem.hover(function(){
+            $(this).find('#deleteIcon').addClass('layui-anim-scale').removeClass('layui-hide');
+          },function(){
+            $(this).find('#deleteIcon').addClass('layui-hide');
+          })
+
+          newItem.find('#deleteIcon').on('click', function(){
+            console.log('删除');
+            delete files[index]; //删除对应的文件
+            console.log(files);
+            newItem.remove();
+            el.next().val('');
+            //判断没有待上传文件
+            if ($.isEmptyObject(files)) {
+              console.log('没有文件');
+              //完成全部上传成功后的逻辑
+              $dragUpload.css({'border-color':'#9B9B9B','background-color': '#fff'});
+              $dragFlag.removeClass('layui-hide');
+              $dragUpload.hover(function(){
+                $(this).css({'border-color':'#1272FA','background-color': '#E2EEFC'});
+              },function(){
+                $(this).css({'border-color':'#9B9B9B','background-color': '#fff'});
+              });
+            }
+            return false;
+          })
+
+          newItem.find('#reuploadIcon').on('click', function(){
+            console.log('重新上传');
+            obj.upload(index, file);
+            return false;
+          })
+
+          $dragUpload.prepend(newItem);
+          $dragUpload.css({'border-color':'transparent','background-color': '#F9F9FA'});
+          $dragFlag.addClass('layui-hide');
+        }
+
+        s.uploadRender = function(el, url, action, token) {
+          upload.render({
+            elem: el,
+            url: url,
+            method: 'put',
+            headers: {
+              "access_token": token
+            },
+            accept: 'images',
+            acceptMime: 'images',
+            // size: 200,
+            auto: false,
+            bindAction: action,
+            multiple: true,
+            choose: function(obj){
+              //将每次选择的文件追加到文件队列
+              s.files = this.files = obj.pushFile();
+              var that = this;
+              obj.preview(function(index, file, result){
+                s.handleBeforeUpload(index, file, result, that, obj, s.files, el);
+              })
+            },
+            before: function(obj) {
+              // layer.load();
+            },
+            done: function(res, index, upload){
+              console.log(res);
+              if (res.code === ERR_OK) {
+                s.upimages.push(res.data.path);
+                console.log(s.upimages);
+                el.find('.img-box-'+index).remove();
+                delete this.files[index]; //删除文件队列已经上传成功的文件
+                if ($.isEmptyObject(this.files)) {
+                  console.log('没有文件');
+                  //完成全部上传成功后的逻辑
+                  $dragUpload.css({'border-color':'#9B9B9B','background-color': '#fff'});
+                  $dragFlag.removeClass('layui-hide');
+                  $dragUpload.hover(function(){
+                    $(this).css({'border-color':'#1272FA','background-color': '#E2EEFC'});
+                  },function(){
+                    $(this).css({'border-color':'#9B9B9B','background-color': '#fff'});
+                  });
+                }
+              } else {
+                this.error(index, upload);
+              }
+            },
+            error: function(index, upload) {
+              el.find('.img-box-'+index).find('#reuploadIcon').removeClass('layui-hide');
+              layer.tips('上传失败，点击可重新上传', el.find('.img-box-'+index), {
+                tips: 3,
+                tipsMore: true,
+                time: 1000
+              })
+            },
+            allDone: function(obj){ //当文件全部被提交后，才触发
+              console.log(obj);
+              if (obj.total == obj.successful) {
+                s.files = {}
+              }
+              layer.msg('成功上传' + obj.successful + '张图片');
+              console.log(obj.total); //得到总文件数
+              console.log(obj.successful); //请求成功的文件数
+              console.log(obj.aborted); //请求失败的文件数
+            }
+          })
+        }
+
+        //tips
+        s.initTips = function(str, el, duration){
+          layer.tips(str, el, {
+            tips: 1,
+            time: duration,
+            tipsMore: true
+          })
+        }
+
+        //初始化 label
+        s.initLabel = function(value){
+          form.val('baseInfo', {
+            type:value
+          })
+        }
+
+        s.init = function() {
+          s.upimages = [];//存放上传后的图片路径
+          s.files = {}; // 存放添加的文件
+
+          s.initTips('可通过点击/拖拽至以下区域添加图片，一次可添加多张，可分多次添加', $dragUpload, 8000);
+          s.initTips('添加完图片后，点击此按钮上传图片,上传完成后再点击「下一步」', $('#upload-images'), 16000);
+
+          s.initLabel(initValue);
+
+          laydate.render({
+            elem: '#date'
+            ,type: 'datetime'
+          });
+
+          //文件上传
+          s.uploadRender($('#drag'), putImagesUrl , '#upload-images', token);
+
+          form.on('select(isSale)',function(data){
+            console.log(data.value);
+            initValue = data.value;
+            if (initValue == 1) {
+              $('.outbound-input').removeClass('layui-disabled').attr({'disabled': null,'lay-verify': 'required'}).parent().removeClass('layui-hide');
+            } else if (initValue == 2) {
+              $('#next').text('退出');
+              $('.outbound-input').addClass('layui-disabled').attr({'disabled':'disabled','lay-verify': null}).parent().addClass('layui-hide');
+            }
+          })
+
+          form.on('submit(store-next)', function(data){
+            var obj = data.field;
+            obj.file = undefined;
+            obj.isSale = undefined;
+            obj.remarkImage = s.upimages.join();
+            obj.jadeId = currentId;
+            console.log(s.upimages);
+            var putSaleInfoData = JSON.stringify(obj);
+
+            console.log(putSaleInfoData);
+            if (initValue == 1) {
+              requestPut(putSaleInfoUrl, token, putSaleInfoData, function(res){
+                console.log(res);
+                if (res.code === ERR_OK) {
+                  layer.confirm('上传成功，是回到首页？',{
+                    btn: ['是，回到首页', '不，继续添加']
+                    ,shade: 0.1 //遮罩透明度
+                    ,offset: '660px'
+                  },function(){
+                    window.parent.location.href = './index.html';
+                  },function(){
+                    parentIframe.contentWindow.location.href = './step-one.html?type=1';
+                  })
+                } else {
+                  layer.msg(res.msg);
+                }
+              });
+            } else {
+              layer.confirm('是否退回首页？',{
+                btn: ['是，回到首页', '不，继续添加']
+                ,shade: 0.1 //遮罩透明度
+                ,offset: '660px'
+              },function(){
+                window.parent.location.href = './index.html';
+              },function(){
+                parentIframe.contentWindow.location.href = './step-one.html?type=1';
+              })
+            }
+            return false;
+          });
+
+        }
+        s.init();
+        return s;
+      })(window.stepModule || {});
+
+    })
+  })
+</script>
+</html>
