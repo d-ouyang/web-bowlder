@@ -355,9 +355,6 @@
         <li class="nav-item" data-page="add">
           添加玉石
         </li>
-        <li class="nav-item" data-page="contact">
-          联系方式
-        </li>
       </ul>
     </section>
 
@@ -366,7 +363,7 @@
       <div class="transx50">
         <div>
           <div class="detail-content-title">
-            当前位置：玉石列表 > 成品 > CP03838240
+            当前位置：
           </div>
 
           <div class="detail-item detail-header box-sizing">
@@ -404,12 +401,12 @@
                     <div class="detail-header-baseinfor">
                       <p>基本信息</p>
                       <h3>{{d.name}}</h3>
-                      <button class="layui-btn layui-btn-radius layui-btn-primary type-btn">
+                      <button data-type="{{d.type}}" class="layui-btn layui-btn-radius layui-btn-primary type-btn">
 
                         {{# if(d.type == 1){}}
                           原石
                         {{# } else if (d.type == 2) {}}
-                          毛料
+                          切料
                         {{# } else if (d.type == 3) {}}
                           成品
                         {{# } }}
@@ -417,7 +414,7 @@
                       </button>
                     </div>
                     <div class="edit-btn-wrapper">
-                      <button class="layui-btn layui-btn-radius edit-btn" data-type="{{d.type}}" data-id="{{d.id}}" data-number="{{d.serialNumber}}"><i class="layui-icon">&#xe642;</i>编辑信息</button>
+                      <button class="layui-btn layui-btn-radius edit-btn" data-type="{{d.type}}" data-number="{{d.serialNumber}}"><i class="layui-icon">&#xe642;</i>编辑信息</button>
                     </div>
                 </div>
                 <div class="detail-header-right-container">
@@ -426,7 +423,7 @@
                       {{# if(d.type == 1){}}
                       原石
                       {{# } else if (d.type == 2){}}
-                      毛料
+                      切料
                       {{# } else if (d.type == 3){}}
                       成品
                       {{# } }}
@@ -451,13 +448,65 @@
               <div class="left-block"></div>
               <div class="detail-item-title">加工信息</div>
             </div>
-            <div class="detail-content box-sizing">
-              <p>是否切割：是</p>
-              <p>是否成品：是</p>
-              <p>加工者：李大奔</p>
-              <p>关联原石编号：<span>YSDSIFSLFSDE</span></p>
-              <p>关联切料编号一：<span>BADFAZVDEDEZ</span></p>
-              <p>关联切料编号二：<span>YSDSIFSLFSDE</span></p>
+            <div class="detail-content box-sizing" id="tpl-process-info-box">
+              <script type="text/html" id="tpl-process-info">
+                {{# if (d.isNull) { }}
+                  <p class="no-infomation">暂时没有相关信息</p>
+                {{# } else { }}
+
+                {{# if (d.type == 1) { }}
+                  {{# if (d.ql.length) { }}
+                    <p>是否切割：是</p>
+                    <p>加工者：{{d.worker}}</p>
+                    {{# layui.each(d.ql, function(index, item){ }}
+                      <p>关联切料编号 {{index + 1}}：<span data-type="2" style="color: #5151F4;cursor: pointer">{{item}}</span></p>
+                    {{# }) }}
+                  {{# } else { }}
+                    <p>是否切割：否</p>
+                    <p>暂无相关关联</p>
+                  {{# } }}
+                {{# } else if (d.type == 2) { }}
+                  <p>加工者：{{d.worker}}</p>
+                  {{# if (d.bs.length) { }}
+                    <p>是否成品：是</p>
+                    <p>加工前原石编号：<span data-type="1" style="color: #5151F4;cursor: pointer">{{d.ys}}</span></p>
+
+                    {{# if (d.ql.length) { }}
+                      {{# layui.each(d.ql, function(index, item){ }}
+                      <p>关联切料编号 {{index + 1}}：<span data-type="2" style="color: #5151F4;cursor: pointer">{{item}}</span></p>
+                      {{# }) }}
+                    {{# } }}
+
+                    {{# layui.each(d.bs, function(index, item){ }}
+                    <p>关联成品编号 {{index + 1}}：<span data-type="3" style="color: #5151F4;cursor: pointer">{{item}}</span></p>
+                    {{# }) }}
+
+                  {{# } else { }}
+                    <p>是否成品：否</p>
+                    <p>加工前原石编号：<span data-type="1" style="color: #5151F4;cursor: pointer">{{d.ys}}</span></p>
+
+                    {{# if (d.ql.length) { }}
+                    {{# layui.each(d.ql, function(index, item){ }}
+                    <p>关联切料编号 {{index + 1}}：<span data-type="2" style="color: #5151F4;cursor: pointer">{{item}}</span></p>
+                    {{# }) }}
+                    {{# } }}
+                  {{# } }}
+                {{# } else if (d.type == 3){ }}
+                  <p>加工者：{{d.worker}}</p>
+                  {{# layui.each(d.ys, function(index, item){ }}
+                  <p>关联原石编号 {{index + 1}}：<span data-type="1" style="color: #5151F4;cursor: pointer">{{item}}</span></p>
+                  {{# }) }}
+                  {{# layui.each(d.ql, function(index, item){ }}
+                  <p>关联切料编号 {{index + 1}}：<span data-type="2" style="color: #5151F4;cursor: pointer">{{item}}</span></p>
+                  {{# }) }}
+                  {{# if (d.bs.length) { }}
+                    {{# layui.each(d.bs, function(index, item){ }}
+                    <p>关联成品编号 {{index + 1}}：<span data-type="3" style="color: #5151F4;cursor: pointer">{{item}}</span></p>
+                    {{# }) }}
+                  {{# } }}
+                {{# } }}
+                {{# } }}
+              </script>
             </div>
           </div>
 
@@ -570,15 +619,13 @@
         laypage = layui.laypage,
         laytpl = layui.laytpl;
 
-      // var CURRENT_PAGE = 'detail';
+      const ERR_OK = 0;
+      const IMAGE_BASE = 'http://47.52.105.7/';
 
-      var ERR_OK = 0;
-
-      var fromPage, isLog, baseUrl, token, history_data, CURRENT_PAGE;
+      var fromPage, isLog, baseUrl, token, history_data;
 
       var init = function () {
-        fromPage = getParamValue('from') || 'index';
-        CURRENT_PAGE = fromPage;
+        fromPage = getParamValue('from');
         token = layui.data('login_info').access_token;
         isLog = returnLoginState(token);
         baseUrl = returnBaseUrl();
@@ -609,10 +656,7 @@
         h.init = function () {
           if (!isLog) {
             $count.html('登录');
-            layer.tips('您还未登录您的账号，请先登录', $count, {
-              tips: [1, '#000000'],
-              time: 4000
-            });
+            window.location.href = './login.html';
             return;
           } else {
             $count.html('我的账户');
@@ -623,13 +667,13 @@
           if (isLog) {
             $exit.toggle();
           } else {
-            window.location.href = './login.html?from=' + CURRENT_PAGE;
+            window.location.href = './login.html';
           }
         })
 
         $exit.on('click', function () {
           layui.data('login_info',null);
-          window.location.href = './login.html?from=' + CURRENT_PAGE;
+          window.location.href = './login.html';
         })
 
         $headerSearch.on('mousedown', function() {
@@ -638,7 +682,7 @@
             history_data = layui.data('history').history_data;
             resetHistoryData(history_data, currentValue);
             $headerSearchInput.val('');
-            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + currentValue;
           }
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
@@ -668,8 +712,7 @@
             resetHistoryData(history_data, currentValue);
             console.log(layui.data('history').history_data);
             $(this).val('');
-            $(this).attr('placeholder','搜索商品编号或者分类名称');
-            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + currentValue;
           }
         }).on('blur', function(e) {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
@@ -681,10 +724,14 @@
       })(window.headerModule || {});
 
       var navModule = (function (n) {
-        $('.nav-item').on('click', function () {
-          if ($(this).hasClass('nav-active')) {
+        $('.nav-item').each(function(index, item){
+          if ($(this).attr('data-page') == fromPage) {
+            $(this).addClass('nav-active');
             return;
           }
+        })
+
+        $('.nav-item').on('click', function () {
           var gotoPage = $(this).attr('data-page');
           window.location.href = './' + gotoPage + '.html';
         })
@@ -693,20 +740,37 @@
 
       var detailModule = (function(d) {
         var token = layui.data('login_info').access_token;
-        var _type = getParamValue('type');
-        var _id = getParamValue('id');
-        var _number = getParamValue('number');
-        var requestUrl = baseUrl + 'jade/' + _number;
+        var currentType = parseInt(getParamValue('type'));
+        var currentNumber = getParamValue('number');
+        var requestUrl = baseUrl + 'jade/' + currentNumber;
+        var $detailContentTitle = $('.detail-content-title');
         console.log(requestUrl);
-        console.log(token);
 
         d.baseInfo = {};
         d.processInfo = {};
         d.outboundinfo = {};
         d.saleinfo = {};
 
+        //初始化当前位置函数
+        function initCurrentPosition(fromPage, type, number) {
+          var thePage = returnPage(fromPage);
+          var theType = returnType(type);
+          var currentPositionHtml = $(
+            '<span class="backPage" style="cursor: pointer">'+ thePage +'</span> &nbsp;&nbsp;&gt;&nbsp;&nbsp; <span class="reSearch" style="cursor: pointer">'+ theType +'</span>&nbsp;&nbsp;&gt;&nbsp;&nbsp;<span>'+ number +'</span>'
+          );
+          $detailContentTitle.append(currentPositionHtml);
+          $detailContentTitle.find('.backPage').on('click', function(){
+            window.location.href = './'+ fromPage + '.html';
+          });
+          $detailContentTitle.find('.reSearch').on('click', function(){
+            console.log('./result.html?page=' + fromPage + '&type=' + type);
+            window.location.href = './results.html?from=' + fromPage + '&type=' + type;
+          });
+
+        }
+
         function handleData(data){
-          // console.log(data);
+          console.log(data);
           if (data.code === ERR_OK) {
             handleBaseInfo(data.data.jadeInformation);
             handleProcessInfo(data.data.processingInformation);
@@ -719,10 +783,17 @@
 
         //处理 baseinfo
         function handleBaseInfo(data) {
+          initCurrentPosition(fromPage, currentType, currentNumber);
+
           var images = data.image.split(',');
+          if (data.image.indexOf('https') == -1) {
+            for (var i in images) {
+              images[i] = IMAGE_BASE + images[i];
+            }
+          }
           data.image = images;
           d.baseInfo = data;
-          // console.log(d.baseInfo);
+          console.log(d.baseInfo);
           //照片渲染
           var goalHtml = $('#tpl-base-img').html();
           var goalEl = $('#tpl-base-img-box');
@@ -742,21 +813,57 @@
 
           $('.edit-btn').on('click',function(){
             console.log($(this));
+            var theType = $(this).attr('data-type');
+            var theNumber = $(this).attr('data-number');
+            window.location.href = './add.html?type=' + theType + '&number=' + theNumber;
+          })
+
+          $('.type-btn').on('click', function(){
+            console.log($(this));
+            var theType = $(this).attr('data-type');
+            window.location.href = './results.html?from=' + fromPage + '&type=' + theType;
           })
         }
 
         //处理 processinfo
         function handleProcessInfo(data) {
           console.log(data);
-          data.type = _type;
+          if ($.isEmptyObject(data)) {
+            data.isNull = true;
+          }
+          data.type = currentType;
+          data.isNull = false;
           d.processinfo = data;
+          if (!data.ys) {
+            data.ys = [];
+          }
+          if (!data.ql) {
+            data.ql = [];
+          }
+          if (!data.bs) {
+            data.bs = [];
+          }
           console.log(d.processinfo);
+          // 基本信息渲染
+          commonRender($('#tpl-process-info').html(), d.processinfo, $('#tpl-process-info-box'));
+          $('#tpl-process-info-box').find('span').on('click', function () {
+            console.log($(this));
+            var theType = parseInt($(this).attr('data-type'));
+            var thetext = $(this).text();
+            window.open('./detail.html?from=' + fromPage + '&type=' + theType + '&number=' + thetext);
+          })
         }
 
         // 处理 outboundinfo
         function handleOutboundInfo(data) {
-          if (data) {
+          console.log(data);
+          if (data && !$.isEmptyObject(data)) {
             var images = data.remarkImage.split(',');
+            if (data.remarkImage.indexOf('https') == -1) {
+              for (var i in images) {
+                images[i] = IMAGE_BASE + images[i];
+              }
+            }
             data.remarkImage = images;
             data.isNull = false;
           } else {
@@ -775,8 +882,14 @@
 
         // 处理 saleinfo
         function handleSaleInfo(data) {
-          if (data) {
+          console.log(data);
+          if (data && !$.isEmptyObject(data)) {
             var images = data.remarkImage.split(',');
+            if (data.remarkImage.indexOf('https') == -1) {
+              for (var i in images) {
+                images[i] = IMAGE_BASE + images[i];
+              }
+            }
             data.remarkImage = images;
             data.isNull = false;
           } else {
@@ -797,10 +910,6 @@
           laytpl(goalHtml).render(data, function(html) {
             goalEl.html(html);
           })
-        }
-
-        function refresh(number) {
-          var requestUrl = baseUrl + 'jade/' + number;
         }
 
         d.init = function() {

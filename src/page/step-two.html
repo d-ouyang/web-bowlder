@@ -605,7 +605,7 @@
               console.log(data);
               if (res.code === ERR_OK){
                 window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-three.html?type=' + currentType + '&number=' + currentNumber + '&jadeId=' + currentId;
-                // window.location.href = './step-three.html?type=' + currentType + '&number=' + currentNumber;
+
               } else {
                 layer.msg(res.msg);
               }

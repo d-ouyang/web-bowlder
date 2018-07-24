@@ -70,6 +70,18 @@
     padding: 0 125px;
   }
 
+  .result-header-add-btn{
+    width: 140px;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 8px;
+    background-color: #85D78D;
+    color: #fff;
+    font-size: 12px;
+    float: right;
+    margin-top: 6px;
+  }
+
   .result-body {
     position: relative;
     padding: 118px 125px 0;
@@ -312,7 +324,7 @@
         </div>
       </div>
       <div class="result-header-tab box-sizing">
-        <form class="layui-form" action="">
+        <form class="layui-form">
           <div class="layui-form-item select-item">
             <select name="kinds" lay-verify="required" lay-filter="kinds">
               <option value="0" selected>全部类别</option>
@@ -326,19 +338,22 @@
               <option value="0" selected>最新上传</option>
             </select>
           </div>
+          <!--<div class="layui-form-item select-item">-->
+            <!--<select name="edit" lay-verify="required" lay-filter="edit">-->
+              <!--<option value="0" selected>最新编辑</option>-->
+            <!--</select>-->
+          <!--</div>-->
           <div class="layui-form-item select-item">
-            <select name="edit" lay-verify="required" lay-filter="edit">
-              <option value="0" selected>最新编辑</option>
-            </select>
-          </div>
-          <div class="layui-form-item select-item">
-            <select name="state" lay-verify="required" lay-filter="state">
-              <option value="0" selected>商品状态</option>
+            <select name="state" lay-verify="required" lay-filter="status">
+              <option value="0" selected>全部状态</option>
               <option value="1">加工</option>
               <option value="2">出库</option>
               <option value="3">销售</option>
             </select>
           </div>
+          <button class="layui-btn result-header-add-btn">
+            <i class="layui-icon">&#xe654;</i> 添加玉石
+          </button>
         </form>
       </div>
     </div>
@@ -350,34 +365,34 @@
             {{#if (d.isType) { }}
               <span class="backPage">{{d.title.first}}</span> &nbsp;&nbsp;&gt;&nbsp;&nbsp; <span class="reSearch">{{d.title.second}}</span>
             {{# } else { }}
-              "{{d.title.first}}" 相关结果 {{d.title.second}}
+              "{{d.title.first}}" 相关结果 {{d.title.second}} 个
             {{#} }}
           </div>
           <ul class="main-list">
             {{# layui.each(d.list, function(index, item) { }}
-            <li class="main-list-item box-sizing">
+            <li class="main-list-item box-sizing" data-type="{{item.type}}" data-number="{{item.serialNumber}}">
               <div class="item-left">
                 <div class="item-img-wrapper">
                   <img lay-src="{{item.src}}">
                 </div>
                 <div class="item-info">
-                  <div class="item-info-title">{{item.title}}</div>
+                  <div class="item-info-title">{{item.name}}</div>
                   <div class="item-info-detail">
-                    <p class="code">编号：{{item.code}}</p>
-                    {{# if(item.tag == 0){ }}
+                    <p class="code">编号：{{item.serialNumber}}</p>
+                    {{# if(item.type == 1){ }}
                     <p class="tag">分类：原石</p>
-                    {{# } else if (item.tag == 1) {}}
-                    <p class="tag">分类：毛料</p>
-                    {{# } else if (item.tag == 2) {}}
+                    {{# } else if (item.type == 2) {}}
+                    <p class="tag">分类：切料</p>
+                    {{# } else if (item.type == 3) {}}
                     <p class="tag">分类：成品</p>
                     {{# } }}
-                    <p class="personal">持有人：{{item.personal}}</p>
+                    <p class="personal">持有人：{{item.owner}}</p>
                   </div>
                 </div>
               </div>
               <div class="item-right">
-                <p class="item-edit">编辑</p>
-                <p class="item-date">{{item.date}}</p>
+                <p class="item-edit" data-type="{{item.type}}" data-number="{{item.serialNumber}}"></p>
+                <p class="item-date">{{item.updateTime}}</p>
               </div>
             </li>
             {{# }) }}
@@ -441,20 +456,25 @@
         laypage = layui.laypage,
         laytpl = layui.laytpl;
 
-      const CURRENT_PAGE = 'results';
-
       const ERR_OK = 0;
       const IMAGE_BASE = 'http://47.52.105.7/';
+      const LIMIT = 8;
+
+      var currentPage = 1;
+      var currentStatus = null;
 
       var baseUrl = returnBaseUrl();
+      var keyRequestUrl = baseUrl + 'jadesSearch';
+      var typerequestUrl = baseUrl + 'jades';
+      var requestUrl = '';
 
       var initValue = '';
       var fromPage, isLog, baseUrl, token, history_data, currentType, currentValue;
 
       var init = function () {
         fromPage = getParamValue('from');
-        currentType = getParamValue('type');
-        currentValue = decodeURIComponent(getParamValue('value'));
+        currentType = parseInt(getParamValue('type'));
+        currentValue = decodeURIComponent(getParamValue('key'));
         token = layui.data('login_info').access_token;
         isLog = returnLoginState(token);
         baseUrl = returnBaseUrl();
@@ -473,6 +493,22 @@
 
       init();
 
+      function returnKeyUrl (url, page, limit, key, type, status) {
+        return url + '?page=' + page + '&limit=' + LIMIT + '&key=' + key;
+      }
+
+      function returnTypeUrl (url, page, limit, type, status) {
+        if (type && status) {
+          return url + '?page=' + page + '&limit=' + limit + '&type=' + type + '&status=' + status;
+        } else if (type && !status) {
+          return url + '?page=' + page + '&limit=' + limit + '&type=' + type;
+        } else if (!type && status) {
+          return url + '?page=' + page + '&limit=' + limit + '&status=' + status;
+        } else {
+          return url + '?page=' + page + '&limit=' + limit;
+        }
+      }
+
       var headerModule = (function (h) {
         var $count = h.$count = $('#count');
         var $exit = h.$exit = $('#exit');
@@ -485,10 +521,7 @@
         h.init = function () {
           if (!isLog) {
             $count.html('登录');
-            layer.tips('您还未登录您的账号，请先登录', $count, {
-              tips: [1, '#000000'],
-              time: 4000
-            });
+            window.location.href = './login.html';
             return;
           } else {
             $count.html('我的账户');
@@ -499,23 +532,25 @@
           if (isLog) {
             $exit.toggle();
           } else {
-            window.location.href = './login.html?from=' + CURRENT_PAGE;
+            window.location.href = './login.html';
           }
         })
 
         $exit.on('click', function () {
           layui.data('login_info',null);
-          window.location.href = './login.html?from=' + CURRENT_PAGE;
+          window.location.href = './login.html';
         })
 
         $headerSearch.on('mousedown', function() {
-          var currentValue = $headerSearchInput.val();
+          currentValue = $headerSearchInput.val();
           if (currentValue != '') {
             history_data = layui.data('history').history_data;
             resetHistoryData(history_data, currentValue);
-            $headerSearchInput.val('');
             resultMoudle.$resultHeaderInput.val(currentValue);
-            // window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            resultMoudle.typeBool = false;
+            requestUrl = resultMoudle.returnRequestUrl(resultMoudle.typeBool);
+            resultMoudle.requestFn(requestUrl,resultMoudle.typeBool);
+            $headerSearchInput.val('');
           }
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
@@ -537,7 +572,8 @@
           var e = e || window.event;
           if (e.keyCode === 13) {
             $(this).blur();
-            var currentValue = $(this).val();
+            currentValue = $(this).val();
+            console.log(currentValue);
             if (currentValue == '') {
               return;
             }
@@ -545,11 +581,13 @@
             resetHistoryData(history_data, currentValue);
             console.log(layui.data('history').history_data);
             $(this).val('');
-            $(this).attr('placeholder','搜索商品编号或者分类名称');
             resultMoudle.$resultHeaderInput.val(currentValue);
-            // window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            resultMoudle.typeBool = false;
+            requestUrl = resultMoudle.returnRequestUrl(resultMoudle.typeBool);
+            resultMoudle.requestFn(requestUrl,resultMoudle.typeBool);
+
           }
-        }).on('blur', function(e) {
+        }).on('blur', function() {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
         })
 
@@ -575,21 +613,14 @@
 
       var resultMoudle = (function (r) {
         r.typeBool = null;
-        if (currentType) {
-          r.typeBool = true;
-          initValue = returnType(currentType);
-        } else {
-          r.typeBool = false;
-          initValue = currentValue;
-        }
+        r.loadData = {};
 
         var $resultHeaderInput = r.$resultHeaderInput = $('.result-header-input');
-
-        $resultHeaderInput.val(initValue);
-        goSearch($resultHeaderInput, '搜索商品编号或者分类名称');
+        var gethtml = $('#script-search-results').html();
+        var $searchResults = $('#search-results');
 
         // 分页列表模板渲染公共函数
-        function renderList(data, gethtml, el) {
+        r.renderList = function(data, gethtml, el) {
           laytpl(gethtml).render(data, function(html) {
             el.html(html);
             var $resultContentTitle = el.find('.result-content-title');
@@ -601,127 +632,187 @@
             })
             var $mainList = el.find('.main-list');
             $mainList.find('li').on('click',function(){
-              currentType = $(this).attr('data-type');
-              console.log($(this));
-              window.open('./detail.html?from=' + fromPage + '&type=' + currentType + '&number=');
+              var theType = $(this).attr('data-type');
+              var theNumber = $(this).attr('data-number');
+              console.log(theType, theNumber);
+              window.open('./detail.html?from=' + fromPage + '&type=' + theType + '&number=' + theNumber);
             })
-            $mainList.find('.item-edit').on('click',function(){
+            $mainList.find('.item-edit').on('click',function(e){
+              var e = e || window.event;
+              e.stopPropagation();
+              var theType = $(this).attr('data-type');
+              var theNumber = $(this).attr('data-number');
+              console.log(theType, theNumber);
+              window.open('./add.html?type=' + theType + '&number=' + theNumber);
+            })
+            //  没数据
+            $mainList.find('button').on('click',function(){
               console.log($(this));
+              window.location.href = './add.html';
             })
           })
         }
 
-        function initLoadData() {
-          var loadData = {};
-          if (r.typeBool) {
-            loadData.isType = true;
-            loadData.title = {};
-            loadData.title.first = returnPage(fromPage);
-            loadData.title.second = returnType(currentType);
-          } else {
-            loadData.isType = false;
-            loadData.title = {};
-            loadData.title.first = currentValue;
-            loadData.title.second = 25000;
-          }
-          loadData.list = [
-            {
-              id: '17356538',
-              code:'2018061501',
-              tag: 0,
-              src: '../common/images/necklace-1.png',
-              personal: 'WAN',
-              date: '2018/06/23 16:03',
-              title:'绿宝石戒指碎钻P1-4xxx/20180614'
-            },
-            {
-              id: '17356538',
-              code:'2018061501',
-              tag: 0,
-              src: '../common/images/necklace-1.png',
-              personal: 'WAN',
-              date: '2018/06/23 16:03',
-              title:'绿宝石戒指碎钻P1-4xxx/20180614'
-            },
-            {
-              id: '17356538',
-              code:'2018061501',
-              tag: 0,
-              src: '../common/images/necklace-1.png',
-              personal: 'WAN',
-              date: '2018/06/23 16:03',
-              title:'绿宝石戒指碎钻P1-4xxx/20180614'
-            },
-            {
-              id: '17356538',
-              code:'2018061501',
-              tag: 0,
-              src: '../common/images/necklace-1.png',
-              personal: 'WAN',
-              date: '2018/06/23 16:03',
-              title:'绿宝石戒指碎钻P1-4xxx/20180614'
-            },
-            {
-              id: '17356538',
-              code:'2018061501',
-              tag: 0,
-              src: '../common/images/necklace-1.png',
-              personal: 'WAN',
-              date: '2018/06/23 16:03',
-              title:'绿宝石戒指碎钻P1-4xxx/20180614'
-            },
-            {
-              id: '17356538',
-              code:'2018061501',
-              tag: 0,
-              src: '../common/images/necklace-1.png',
-              personal: 'WAN',
-              date: '2018/06/23 16:03',
-              title:'绿宝石戒指碎钻P1-4xxx/20180614'
-            },
-            {
-              id: '17356538',
-              code:'2018061501',
-              tag: 0,
-              src: '../common/images/necklace-1.png',
-              personal: 'WAN',
-              date: '2018/06/23 16:03',
-              title:'绿宝石戒指碎钻P1-4xxx/20180614'
+        // 通过 url 请求数据
+        r.requestFn  = function (url, bool) {
+          var loadData = r.loadData;
+          loadData.isType = bool;
+          loadData.title = {};
+          requestGet(url, token, function(res){
+            console.log(res);
+            if (bool) {
+              loadData.title.first = returnPage(fromPage);
+              loadData.title.second = initValue;
+            } else {
+              loadData.title.first = currentValue;
+              loadData.title.second = res.data.totalElements;
             }
-          ];
-          return loadData;
+            var currentPageData = res.data.content;
+            for (var i in currentPageData) {
+              if (currentPageData[i].image.indexOf('https') > -1) {
+                currentPageData[i].src = currentPageData[i].image;
+              } else {
+                currentPageData[i].src = IMAGE_BASE + currentPageData[i].image.split(',')[0];
+              }
+            }
+            loadData.list = currentPageData;
+            console.log(loadData);
+            r.renderList(loadData, gethtml, $searchResults);
+            if (currentPage == 1) {
+              r.renderPage(res.data.totalElements, bool);
+            }
+          })
         }
 
-        var gethtml = $('#script-search-results').html();
-        var $searchResults = $('#search-results');
-        var loadData = initLoadData();
-
-        renderList(loadData,gethtml,$searchResults);
-
-        r.init = function () {
-          flow.lazyimg();
-
+        r.renderPage = function(count){
           laypage.render({
             elem: 'laypage',
-            count: 200,
+            count: count,
             limit: 8,
             curr: 1,
             groups: 5,
             prev: '<i class="layui-icon">&#xe603;</i>',
             next: '<i class="layui-icon">&#xe602;</i>',
             theme: 'box',
-            hash: 'page',
             jump: function (obj, first) {
-              //obj包含了当前分页的所有参数，比如：
-              console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
-              console.log(obj.limit); //得到每页显示的条数
-              console.log(first);
-
-              //首次不执行
               if (!first) {
-                console.log('something');
+                currentPage = obj.curr;
+                requestUrl = r.returnRequestUrl(r.typeBool);
+                console.log(requestUrl);
+                r.requestFn(requestUrl, r.typeBool);
               }
             }
+          })
+        }
+
+        //返回请求地址
+        r.returnRequestUrl = function(bool){
+          if (bool) {
+            requestUrl = returnTypeUrl(typerequestUrl, currentPage, LIMIT, currentType, currentStatus);
+          } else {
+            requestUrl = returnKeyUrl(keyRequestUrl, currentPage, LIMIT, currentValue);
+          }
+          return requestUrl;
+        }
+
+        r.init = function () {
+          if (currentType) {
+            r.typeBool = true;
+            initValue = returnType(currentType);
+          } else {
+            r.typeBool = false;
+            initValue = currentValue;
+          }
+          $resultHeaderInput.val(initValue);
+
+          //初始化函数  第一次进入结果页拿数据
+          requestUrl = r.returnRequestUrl(r.typeBool);
+          r.requestFn(requestUrl,r.typeBool);
+          // r.initDataFn(r.typeBool);
+
+          flow.lazyimg();
+
+          form.on('select(kinds)',function(data){
+            r.typeBool = true;
+            var theType = parseInt(data.value);
+            initValue = data.othis.find('input').val();
+            $resultHeaderInput.val(initValue);
+            if (theType) {
+              currentType = theType;
+            } else {
+              currentType = null
+            }
+            currentPage = 1;
+            requestUrl = r.returnRequestUrl(r.typeBool);
+            console.log(requestUrl);
+            r.requestFn(requestUrl,r.typeBool);
+          })
+
+          form.on('select(new)',function(data){
+            r.typeBool = true;
+            currentPage = 1;
+            initValue = data.othis.find('input').val();
+            $resultHeaderInput.val(initValue);
+            requestUrl = r.returnRequestUrl(r.typeBool);
+            console.log(requestUrl);
+            r.requestFn(requestUrl,r.typeBool);
+          })
+
+          form.on('select(status)',function(data){
+            console.log(data.othis.find('input').val());
+            r.typeBool = true;
+            var theStatus = parseInt(data.value);
+            initValue = data.othis.find('input').val();
+            $resultHeaderInput.val(initValue);
+            if (theStatus) {
+              currentStatus = theStatus;
+            } else {
+              currentStatus = null;
+            }
+            requestUrl = r.returnRequestUrl(r.typeBool);
+            console.log(requestUrl);
+            r.requestFn(requestUrl,r.typeBool);
+          })
+
+          //  输入框
+          $resultHeaderInput.on('focus',function(){
+            $(this).attr('placeholder', '');
+          }).on('keyup', function(e){
+            var e = e || window.event;
+            if (e.keyCode === 13) {
+              $(this).blur();
+              currentValue = $(this).val();
+              console.log(currentValue);
+              if (currentValue == '') {
+                return;
+              }
+              history_data = layui.data('history').history_data;
+              resetHistoryData(history_data, currentValue);
+              console.log(layui.data('history').history_data);
+              r.typeBool = false;
+              requestUrl = r.returnRequestUrl(r.typeBool);
+              r.requestFn(requestUrl,r.typeBool);
+            }
+          }).on('blur', function() {
+            $(this).attr('placeholder', '搜索商品编号或者分类名称');
+          })
+
+          //  输入框右边搜索按钮
+          $('.result-header-icon-box').on('click', function () {
+            currentValue = $resultHeaderInput.val();
+            if (currentValue == '') {
+              return;
+            }
+            history_data = layui.data('history').history_data;
+            resetHistoryData(history_data, currentValue);
+            r.typeBool = false;
+            requestUrl = r.returnRequestUrl(r.typeBool);
+            r.requestFn(requestUrl,r.typeBool);
+          })
+
+          // 添加玉石
+          $('.result-header-add-btn').on('click', function(){
+            window.open('./add.html')
           })
         };
 

@@ -502,7 +502,7 @@
                     {{# if(item.type == 1){ }}
                       <div class="tag">分类：原石</div>
                     {{# } else if (item.type == 2) {}}
-                      <div class="tag">分类：毛料</div>
+                      <div class="tag">分类：切料</div>
                     {{# } else if (item.type == 3) {}}
                       <div class="tag">分类：成品</div>
                     {{# } }}
@@ -609,10 +609,7 @@
         h.init = function () {
           if (!isLog) {
             $count.html('登录');
-            layer.tips('您还未登录您的账号，请先登录', $count, {
-              tips: [1, '#000000'],
-              time: 4000
-            });
+            window.location.href = './login.html?from=' + CURRENT_PAGE;
             return;
           } else {
             $count.html('我的账户');
@@ -638,7 +635,7 @@
             history_data = layui.data('history').history_data;
             resetHistoryData(history_data, currentValue);
             $headerSearchInput.val('');
-            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + currentValue;
           }
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
@@ -669,7 +666,7 @@
             console.log(layui.data('history').history_data);
             $(this).val('');
             $(this).attr('placeholder','搜索商品编号或者分类名称');
-            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + currentValue;
           }
         }).on('blur', function(e) {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
@@ -727,7 +724,11 @@
             }
             currentPageData = data.data.content;
             for (var i in currentPageData) {
-              currentPageData[i].src = IMAGE_BASE + currentPageData[i].image.split(',')[0];
+              if (currentPageData[i].image.indexOf('https') > -1) {
+                currentPageData[i].src = currentPageData[i].image;
+              } else {
+                currentPageData[i].src = IMAGE_BASE + currentPageData[i].image.split(',')[0];
+              }
             }
             console.log(currentPageData);
             renderModel(gethtml, currentPageData, $listBox, function() {
@@ -778,7 +779,7 @@
             window.location.href = './list.html';
           });
           $('.bowlder-add_btn, .no-data-btn > button').on('click', function () {
-            window.location.href = './add.html';
+            window.open('./add.html');
           })
 
           //注册点击 原石、切料、成品 事件
@@ -821,7 +822,7 @@
               console.log(layui.data('history').history_data);
               $(this).val('');
               $(this).attr('placeholder','搜索商品编号或者分类名称');
-              window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+              window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + currentValue;
             }
           }).on('blur',function(e) {
             var e = e || window.event;
@@ -838,7 +839,7 @@
             history_data = layui.data('history').history_data;
             resetHistoryData(history_data, currentValue);
             console.log(layui.data('history').history_data);
-            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + currentValue;
           })
 
           // 请求数据

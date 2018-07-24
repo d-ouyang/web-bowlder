@@ -178,7 +178,6 @@
   <!--header -->
   <section class="header box-sizing">
     <div class="title">
-      <image src=""></image>
       <div class="layui-inline title-one">掌玉宝</div>
       <div class="layui-inline title-two">交易平台</div>
     </div>
@@ -238,7 +237,7 @@
         <div class="list-header-item box-sizing">
           <div class="header-item-left">
             <img lay-src="../common/images/cropping@3x.png">
-            <h3>毛料</h3>
+            <h3>切料</h3>
             <p>More than expected</p>
           </div>
           <div class="header-item-right">
@@ -351,10 +350,7 @@
         h.init = function () {
           if (!isLog) {
             $count.html('登录');
-            layer.tips('您还未登录您的账号，请先登录', $count, {
-              tips: [1, '#000000'],
-              time: 4000
-            });
+            window.location.href = './login.html?from=' + CURRENT_PAGE;
             return;
           } else {
             $count.html('我的账户');
@@ -446,7 +442,7 @@
               '<li class="main-list-item box-sizing" data-number="'+ item.serialNumber +'" data-type="'+ item.type +'" data-id="'+ item.id +'">'+
               '<div class="item-left">'+
               '<div class="item-img-wrapper">'+
-              '<img lay-src="'+ IMAGE_BASE + item.image.split(',')[0] +'">'+
+              '<img lay-src="'+ item.src +'">'+
               '</div>'+
               '<div class="item-info">'+
               '<div class="item-info-title">' + item.name + '</div>'+
@@ -458,7 +454,7 @@
               '</div>'+
               '</div>'+
               '<div class="item-right">'+
-              '<p class="item-edit" data-number="'+ item.serialNumber +'" data-type="'+ item.type +'" data-id="'+ item.id +'">编辑</p>'+
+              '<p class="item-edit" data-number="'+ item.serialNumber +'" data-type="'+ item.type +'"></p>'+
               '<p class="item-date">'+ item.updateTime +'</p>'+
               '</div>'+
               '</li>'
@@ -474,10 +470,9 @@
             if (nodename == 'ul' || $(target).hasClass('layui-flow-more')) {
               return;
             } else if ($(target).hasClass('item-edit')) {
-              currentId = $(target).attr('data-id');
               currentType = $(target).attr('data-type');
               currentNumber = $(target).attr('data-number');
-              window.location.href = './add.html?id=' + currentId + '&type=' + currentType + '&number=' + currentNumber;
+              window.open('./add.html?type=' + currentType + '&number=' + currentNumber);
             } else if (nodename != 'cite'){
               if (nodename == 'li') {
                 currentId = $(target).attr('data-id');
@@ -514,7 +509,6 @@
         $('.list-header-item').on('click', function () {
           var tarIndex = $(this).index();
           window.location.href = './results.html?from=' + CURRENT_PAGE + '&type=' + (tarIndex+1);
-          // window.open('./results.html?from=' + CURRENT_PAGE + '&type=' + (tarIndex+1));
         })
 
         function flowLoad() {
@@ -530,7 +524,15 @@
               var listRequestUrl = returnUrl(page, 10);
               requestGet(listRequestUrl, token, function(data){
                 if (data.code === ERR_OK) {
-                  renderListData(data.data.content, lis);
+                  var currentPageData = data.data.content;
+                  for (var i in currentPageData) {
+                    if (currentPageData[i].image.indexOf('https') > -1) {
+                      currentPageData[i].src = currentPageData[i].image;
+                    } else {
+                      currentPageData[i].src = IMAGE_BASE + currentPageData[i].image.split(',')[0];
+                    }
+                  }
+                  renderListData(currentPageData, lis);
                   next(lis.join(''), page < data.data.totalPages);
                 } else {
                   layer.msg(data.msg);

@@ -119,7 +119,7 @@
         flow = layui.flow,
         laytpl = layui.laytpl;
 
-      var CURRENT_PAGE = 'list';
+      var CURRENT_PAGE = 'add';
 
       var ERR_OK = 0;
 
@@ -157,10 +157,7 @@
         h.init = function () {
           if (!isLog) {
             $count.html('登录');
-            layer.tips('您还未登录您的账号，请先登录', $count, {
-              tips: [1, '#000000'],
-              time: 4000
-            });
+            window.location.href = './login.html?from=' + CURRENT_PAGE;
             return;
           } else {
             $count.html('我的账户');
@@ -186,7 +183,7 @@
             history_data = layui.data('history').history_data;
             resetHistoryData(history_data, currentValue);
             $headerSearchInput.val('');
-            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + currentValue;
           }
           $(this).parent('.search-box').width(285);
           $(this).siblings('input,i').removeClass('layui-hide');
@@ -216,10 +213,9 @@
             resetHistoryData(history_data, currentValue);
             console.log(layui.data('history').history_data);
             $(this).val('');
-            $(this).attr('placeholder','搜索商品编号或者分类名称');
-            window.location.href = './results.html?from=' + CURRENT_PAGE + '&value=' + currentValue;
+            window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + currentValue;
           }
-        }).on('blur', function(e) {
+        }).on('blur', function() {
           $(this).attr('placeholder', '搜索商品编号或者分类名称');
         })
 
@@ -240,11 +236,23 @@
       })(window.navModule || {});
 
       var addModule = (function(a){
-        var _type = getParamValue('type') || 1; // 默认添加原石
+        var currentType = getParamValue('type');
+        // var currentId = getParamValue('id');
+        var currentNumber = getParamValue('number');
+        var currentSrc = null;
+
+        if (!currentType) {
+          currentType = 1; // 默认添加原石
+          currentSrc = '"step-one.html?type=' + currentType + '"';
+        } else {
+          currentSrc = '"step-one.html?type='+ currentType + '&number='+ currentNumber +'"';
+        }
+
+        console.log(currentSrc);
 
         a.init = function () {
           $('#add-body').html(
-            '<iframe class="box-sizing" scrolling="no" frameborder="0" id="step-iframe" src="step-one.html?type='+ _type +'"></iframe>'
+            '<iframe class="box-sizing" scrolling="no" frameborder="0" id="step-iframe" src='+currentSrc+'></iframe>'
           );
         }
 
