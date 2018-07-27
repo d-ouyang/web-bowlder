@@ -473,6 +473,7 @@
 
       var init = function () {
         fromPage = getParamValue('from');
+        console.log(fromPage);
         currentType = parseInt(getParamValue('type'));
         currentValue = decodeURIComponent(getParamValue('key'));
         token = layui.data('login_info').access_token;
@@ -626,6 +627,11 @@
             var $resultContentTitle = el.find('.result-content-title');
             $resultContentTitle.find('.backPage').on('click',function(){
               console.log($(this).text());
+              if ($(this).text() == '玉石列表') {
+                window.location.href = './list.html';
+              } else if ($(this).text() == '首页') {
+                window.location.href = './index.html';
+              }
             })
             $resultContentTitle.find('.reSearch').on('click',function(){
               console.log($(this).text());

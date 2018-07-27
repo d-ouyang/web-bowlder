@@ -414,7 +414,7 @@
                       </button>
                     </div>
                     <div class="edit-btn-wrapper">
-                      <button class="layui-btn layui-btn-radius edit-btn" data-type="{{d.type}}" data-number="{{d.serialNumber}}"><i class="layui-icon">&#xe642;</i>编辑信息</button>
+                      <button class="layui-btn layui-btn-radius edit-btn" data-id="{{d.id}}" data-type="{{d.type}}" data-number="{{d.serialNumber}}"><i class="layui-icon">&#xe642;</i>编辑信息</button>
                     </div>
                 </div>
                 <div class="detail-header-right-container">
@@ -626,6 +626,7 @@
 
       var init = function () {
         fromPage = getParamValue('from');
+        console.log(fromPage);
         token = layui.data('login_info').access_token;
         isLog = returnLoginState(token);
         baseUrl = returnBaseUrl();
@@ -815,7 +816,9 @@
             console.log($(this));
             var theType = $(this).attr('data-type');
             var theNumber = $(this).attr('data-number');
-            window.location.href = './add.html?type=' + theType + '&number=' + theNumber;
+            var theId = $(this).attr('data-id');
+            console.log(theType, theNumber, theId);
+            window.location.href = './add.html?type=' + theType + '&number=' + theNumber + '&id=' + theId + '&from=' + fromPage;
           })
 
           $('.type-btn').on('click', function(){
@@ -843,6 +846,11 @@
           if (!data.bs) {
             data.bs = [];
           }
+
+          if (!data.worker) {
+            data.worker = '无';
+            data.ys = '无';
+          }
           console.log(d.processinfo);
           // 基本信息渲染
           commonRender($('#tpl-process-info').html(), d.processinfo, $('#tpl-process-info-box'));
@@ -850,6 +858,9 @@
             console.log($(this));
             var theType = parseInt($(this).attr('data-type'));
             var thetext = $(this).text();
+            if (thetext == '无') {
+              return;
+            }
             window.open('./detail.html?from=' + fromPage + '&type=' + theType + '&number=' + thetext);
           })
         }

@@ -128,9 +128,9 @@
     position: absolute;
     width: 590px;
     height: 425px;
-    left: 50%;
+    left: 25%;
     margin-left: -295px;
-    top: 150px;
+    top: 183px;
     background-color: #F8F8F8;
     border-radius: 11pt;
     box-shadow: 0 11px 22px 0 rgba(0, 0 ,0 , 0.33);
@@ -265,7 +265,7 @@
       </div>
     </div>
     <div class="step-main step-one-main box-sizing">
-      <form class="layui-form" lay-filter="process-form">
+      <form class="layui-form" lay-filter="processInfo">
         <div class="put-box">
           <div class="put-box-header box-sizing">基础信息</div>
           <div class="put-box-content box-sizing">
@@ -283,12 +283,22 @@
                   <script type="text/html" id="about-tpl">
 
                     <div class="about-sth">
-                      <div class="layui-form-item about-sth-item">
+                      {{# if (d.isEdit) { }}
+                        {{# layui.each(d.initData,function(index, item){ }}
+                          <div class="layui-form-item about-sth-item">
+                            <label>加工前<span>{{d.value}}</span>编号</label>
+                            <input value="{{item}}" data-classid="{{index+d.classId}}" type="input" name="rawNumber-{{index+d.classId}}" lay-verify="required" lay-verType="tips" class="layui-input about-input-{{index+d.classId}}">
+                            <i class="layui-icon">&#xe640;</i>
+                          </div>
+                        {{# }) }}
+                      {{# } else { }}
+                        <div class="layui-form-item about-sth-item">
+                          <label>加工前<span>{{d.value}}</span>编号</label>
+                          <input type="input" data-classid="{{d.classId}}" name="rawNumber-{{d.classId}}" lay-verify="required" lay-verType="tips" class="layui-input about-input-{{d.classId}}">
+                          <i class="layui-icon">&#xe640;</i>
+                        </div>
+                      {{# } }}
 
-                        <label>加工前<span>{{d.value}}</span>编号</label>
-                        <input type="input" name="rawNumber-{{d.classId}}" lay-verify="required" lay-verType="tips" class="layui-input about-input-{{d.classId}}">
-                        <i class="layui-icon layui-hide">&#xe640;</i>
-                      </div>
                       {{# if (d.type == 3){}}
                       <div class="about-ql">
                         <button type="button" class="layui-btn about-ql-btn">关联切料</button>
@@ -343,7 +353,7 @@
 </section>
 </body>
 <script type="text/javascript" src="../layui/layui.js"></script>
-<script type="text/javascript" src="../libs/plugin.js"></script>
+<script type="text/javascript" src="../libs/plugin.js?id=10"></script>
 <script type="text/javascript">
   $(function() {
     layui.use(['layer', 'form', 'flow','laydate','upload','laypage', 'laytpl'],function(){
@@ -359,8 +369,15 @@
 
       var currentType = getParamValue('type');
       var currentNumber = getParamValue('number');
-      var currentId = getParamValue('jadeId');
-      console.log(currentType,currentNumber,currentId);
+      var currentId = getParamValue('id');
+      var isEdit = getParamValue('isEdit');
+      if (isEdit === 'false') {
+        isEdit = false;
+      } else if (isEdit === 'true') {
+        isEdit = true;
+      }
+      var fromPage = getParamValue('from');
+      console.log(currentType,currentNumber,currentId,isEdit,fromPage);
       var baseUrl = returnBaseUrl();
       var putProcessInfoUrl = baseUrl + 'processingInformation';
       var getWindownSearchUrl = baseUrl + 'jadeSerialNumber';
@@ -370,19 +387,15 @@
       var stepModule = (function(s){
         s.currentPage = 1;
         s.limit = 5;
-        s.classId = 1;
 
         // 渲染关联部分
         var aboutTpl = $('#about-tpl').html();
         var aboutTplBox = $('#about-tpl-box');
-        var aboutData = {
-          type: currentType,
-          value: returnType(currentType-1),
-          classId: s.classId
-        }
+
         // 渲染搜索结果部分
         var windowTpl = $('#window-tpl').html();
         var windowTplBox = $('#window-tpl-box');
+
 
         s.returnWindowUrl = function(page, limit, type, val){
           return getWindownSearchUrl + '?page=' + page + '&limit=' + limit + '&type=' + type + '&serialNumber=' + val
@@ -433,10 +446,18 @@
           laytpl(gethtml).render(data, function(html){
             el.html(html);
 
-            el.find('.about-input-'+data.classId).on('focus', function(){
-              console.log($('.about-sth-item').length);
-              $('.small-window').removeClass('layui-hide').attr('data-classid',data.classId);
-            });
+            el.find('.about-sth-item').each(function(){
+              console.log($(this).find('input'));
+              $(this).find('input').on('focus', function(){
+                var theClassId = $(this).attr('data-classid');
+                $('.small-window').removeClass('layui-hide').attr('data-classid',theClassId);
+              })
+            })
+
+            // el.find('.about-input-'+ data.classId).on('focus', function(){
+            //   console.log($('.about-sth-item').length);
+            //   $('.small-window').removeClass('layui-hide').attr('data-classid',data.classId);
+            // });
 
             //注册取消事件
             $('.window-cancle').on('click', function(){
@@ -488,7 +509,8 @@
                   time: 4000
                 });
               } else {
-                s.classId += 1;
+                s.classId = $('.layui-form-item').length + 1;
+                // s.classId += 1;
                 //  添加相关联模块
                 s.addAboutModule(s.classId);
               }
@@ -540,9 +562,60 @@
           })
         }
 
-        s.init = function() {
+        // 初始化数据
+        s.handleInitData = function(data){
+          console.log(data);
+          form.val('processInfo', {
+            worker: data.worker
+          })
+        }
+
+        s.init = function(){
+          s.aboutData = {};
+          s.classId = 1;
+
+          console.log(layui.data('current_edit_data').jadeInformation);
+          console.log(layui.data('current_edit_data').processingInformation);
+          console.log(layui.data('current_edit_data').outboundInformation);
+          console.log(layui.data('current_edit_data').salesInformation);
+
+          if (isEdit) {
+            var theData = layui.data('current_edit_data').processingInformation;
+            console.log(theData);
+            s.handleInitData(theData);
+            var initData = [];
+            if (currentType == 2) {
+              initData.push(theData.ys);
+              s.aboutData = {
+                isEdit:isEdit,
+                type: currentType,
+                value: returnType(currentType-1),
+                initData: initData,
+                classId: s.classId
+              }
+            } else {
+              // s.classId = theData.ql.length;
+              s.aboutData = {
+                isEdit:isEdit,
+                type: currentType,
+                value: returnType(currentType-1),
+                initData:theData.ql,
+                classId: s.classId
+              }
+            }
+          } else {
+            s.aboutData = {
+              isEdit:isEdit,
+              type: currentType,
+              value: returnType(currentType-1),
+              classId: s.classId
+            }
+          }
+
+          console.log(s.aboutData);
+
           //渲染关联模块 Dom
-          s.renderAboutModule(aboutData, aboutTpl, aboutTplBox);
+          s.renderAboutModule(s.aboutData, aboutTpl, aboutTplBox);
 
           //smallWindow
           $('.window-search').on('focus', function(){
@@ -601,15 +674,43 @@
             dataObj.type = currentType;
             var requestData = JSON.stringify(dataObj);
             console.log(requestData);
-            requestPut(putProcessInfoUrl, token, requestData, function(res) {
-              console.log(data);
-              if (res.code === ERR_OK){
-                window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-three.html?type=' + currentType + '&number=' + currentNumber + '&jadeId=' + currentId;
 
-              } else {
-                layer.msg(res.msg);
-              }
-            });
+            if (isEdit) {
+              requestPost(putProcessInfoUrl, token, requestData, function(res){
+                console.log(data);
+                if (res.code === ERR_OK){
+                  var theOutboundInformation = layui.data('current_edit_data').outboundInformation;
+                  if (!theOutboundInformation || $.isEmptyObject(theOutboundInformation)) {
+                    isEdit = false;
+                    currentId = currentId;
+                  } else {
+                    isEdit = true;
+                    currentId = theOutboundInformation.id;
+                  }
+                  window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-three.html?type=' + currentType + '&number=' + currentNumber + '&id=' + currentId + '&isEdit=' + isEdit + '&from=' + fromPage;
+                } else {
+                  layer.msg(res.msg);
+                }
+              })
+            } else {
+              requestPut(putProcessInfoUrl, token, requestData, function(res) {
+                console.log(data);
+                if (res.code === ERR_OK){
+                  var theOutboundInformation = layui.data('current_edit_data').outboundInformation;
+                  if (!theOutboundInformation || $.isEmptyObject(theOutboundInformation)) {
+                    isEdit = false;
+                    // currentId = layui.data('current_edit_data').jadeInformation.id;
+                    currentId = currentId;
+                  } else {
+                    isEdit = true;
+                    currentId = theOutboundInformation.id;
+                  }
+                  window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-three.html?type=' + currentType + '&number=' + currentNumber + '&id=' + currentId + '&isEdit=' + isEdit;
+                } else {
+                  layer.msg(res.msg);
+                }
+              });
+            }
             return false;
           });
 

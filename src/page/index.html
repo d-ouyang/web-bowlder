@@ -259,12 +259,12 @@
     text-align: center;
     line-height: 64px;
   }
-  .no-data-btn{
+  .no-data-btn-wrap{
     width: 100%;
     text-align: center;
     margin-top: 30px;
   }
-  .no-data-btn button {
+  .no-data-btn {
     width: 230px;
     height: 60px;
     line-height: 60px;
@@ -511,8 +511,8 @@
                 {{# }) }}
                 {{# if (d.length === 0) { }}
                   <p class="no-data">还没有任何新增记录</p>
-                  <div class="no-data-btn">
-                    <button class="layui-btn">
+                  <div class="no-data-btn-wrap">
+                    <button class="layui-btn no-data-btn">
                       <i class="layui-icon">&#xe654;</i> 上传玉石
                     </button>
                   </div>
@@ -778,7 +778,7 @@
           $('.bowlder-list_btn').on('click', function () {
             window.location.href = './list.html';
           });
-          $('.bowlder-add_btn, .no-data-btn > button').on('click', function () {
+          $('.bowlder-add_btn, .no-data-btn').on('click', function () {
             window.open('./add.html');
           })
 
@@ -806,6 +806,7 @@
                   $('.home-history-search').addClass('layui-hide');
                   resetHistoryData(history_data, _text, _index);
                   console.log(layui.data('history').history_data);
+                  window.location.href = './results.html?from=' + CURRENT_PAGE + '&key=' + _text;
                 }
               });
             });

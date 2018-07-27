@@ -282,11 +282,11 @@
                     点击 / 拖拽添加图片
                   </div>
                 </div>
-                <div class="btn-upload">
-                  <button type="button" class="layui-btn" id="upload-images">
-                    <i class="layui-icon">&#xe67c;</i> 点击上传
-                  </button>
-                </div>
+                <!--<div class="btn-upload">-->
+                  <!--<button type="button" class="layui-btn" id="upload-images">-->
+                    <!--<i class="layui-icon">&#xe67c;</i> 点击上传-->
+                  <!--</button>-->
+                <!--</div>-->
               </div>
             </div>
           </div>
@@ -302,7 +302,7 @@
 </section>
 </body>
 <script type="text/javascript" src="../layui/layui.js"></script>
-<script type="text/javascript" src="../libs/plugin.js"></script>
+<script type="text/javascript" src="../libs/plugin.js?id=10"></script>
 <script type="text/javascript">
   $(function() {
     layui.use(['layer', 'form', 'flow','laydate','upload', 'laytpl'],function(){
@@ -319,8 +319,16 @@
 
       var currentType = getParamValue('type');
       var currentNumber = getParamValue('number');
-      var currentId = getParamValue('jadeId');
-      console.log(currentType,currentNumber,currentId);
+      var currentId = getParamValue('id');
+      var isEdit = getParamValue('isEdit');
+      if (isEdit === 'false') {
+        isEdit = false;
+      } else if (isEdit === 'true') {
+        isEdit = true;
+      }
+      console.log(typeof isEdit);
+      var fromPage = getParamValue('from');
+      console.log(currentType,currentNumber,currentId,isEdit,fromPage);
       var baseUrl = returnBaseUrl();
       var putImagesUrl = baseUrl + 'image';
       var putOutboundInfoUrl = baseUrl + 'outboundInformation';
@@ -384,7 +392,7 @@
           $dragFlag.addClass('layui-hide');
         }
 
-        s.uploadRender = function(el, url, action, token) {
+        s.uploadRender = function(el, url, token) {
           upload.render({
             elem: el,
             url: url,
@@ -395,8 +403,8 @@
             accept: 'images',
             acceptMime: 'images',
             // size: 200,
-            auto: false,
-            bindAction: action,
+            // auto: false,
+            // bindAction: action,
             multiple: true,
             choose: function(obj){
               //将每次选择的文件追加到文件队列
@@ -418,6 +426,7 @@
                 delete this.files[index]; //删除文件队列已经上传成功的文件
                 if ($.isEmptyObject(this.files)) {
                   console.log('没有文件');
+                  layer.msg('总共成功上传 ' + s.upimages.length + ' 张图片');
                   //完成全部上传成功后的逻辑
                   $dragUpload.css({'border-color':'#9B9B9B','background-color': '#fff'});
                   $dragFlag.removeClass('layui-hide');
@@ -442,9 +451,20 @@
             allDone: function(obj){ //当文件全部被提交后，才触发
               console.log(obj);
               if (obj.total == obj.successful) {
-                s.files = {}
+                s.files = {};
+                if ($.isEmptyObject(s.files)) {
+                  console.log('没有文件');
+                  layer.msg('总共成功上传 ' + s.upimages.length + ' 张图片');
+                  //完成全部上传成功后的逻辑
+                  $dragUpload.css({'border-color':'#9B9B9B','background-color': '#fff'});
+                  $dragFlag.removeClass('layui-hide');
+                  $dragUpload.hover(function(){
+                    $(this).css({'border-color':'#1272FA','background-color': '#E2EEFC'});
+                  },function(){
+                    $(this).css({'border-color':'#9B9B9B','background-color': '#fff'});
+                  });
+                }
               }
-              layer.msg('成功上传' + obj.successful + '张图片');
               console.log(obj.total); //得到总文件数
               console.log(obj.successful); //请求成功的文件数
               console.log(obj.aborted); //请求失败的文件数
@@ -462,46 +482,123 @@
         }
 
         // 初始化数据 搁置
-        // s.initNumber = funtion(number) {
-        //   if (number == '') {
-        //
-        //   }
-        // }
+        s.handleInitData = function(data){
+          currentId = data.id;
+          s.upimages = data.remarkImage.split(',');
+          form.val('baseInfo',{
+            isOutbound: 1,
+            serialNumber: data.serialNumber,
+            outboundPlace: data.outboundPlace,
+            outboundTime: data.outboundTime,
+            owner: data.owner,
+            remarkText: data.remarkText
+          })
+        }
 
         //初始化 label
         s.initLabel = function(value){
           form.val('baseInfo', {
-            type:value
+            isOutbound:value
           })
+        }
+
+        s.submitBaseInfo = function(isEdit){
+          form.on('submit(store-next)', function(data){
+            var obj = data.field;
+            obj.file = undefined;
+            obj.isOutbound = undefined;
+            obj.remarkImage = s.upimages.join();
+            console.log(s.upimages);
+
+            console.log(putOutboundInfoData);
+            if (initValue == 1) {
+              if (isEdit) {
+                obj.id = layui.data('current_edit_data').outboundInformation.id;
+                console.log('currentId' + currentId);
+                var putOutboundInfoData = JSON.stringify(obj);
+                requestPost(putOutboundInfoUrl, token, putOutboundInfoData, function(res){
+                  console.log(res);
+                  if (res.code === ERR_OK) {
+                    var theSalesInformation = layui.data('current_edit_data').salesInformation;
+                    if (!theSalesInformation || $.isEmptyObject(theSalesInformation)) {
+                      isEdit = false;
+                      currentId = currentId;
+                    } else {
+                      isEdit = true;
+                      currentId = layui.data('current_edit_data').salesInformation.id;
+                    }
+
+                    console.log('isEdit'+isEdit);
+                    console.log('curentId'+ currentId);
+                    window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-four.html?type=' + currentType + '&number=' + currentNumber + '&id=' + currentId + '&isEdit=' + isEdit + '&from=' + fromPage;
+                  } else {
+                    layer.msg(res.msg);
+                  }
+                })
+              } else {
+                obj.jadeId = currentId;
+                var putOutboundInfoData = JSON.stringify(obj);
+                requestPut(putOutboundInfoUrl, token, putOutboundInfoData, function(res){
+                  console.log(res);
+                  if (res.code === ERR_OK) {
+                    var theSalesInformation = layui.data('current_edit_data').salesInformation;
+                    if (!theSalesInformation || $.isEmptyObject(theSalesInformation)) {
+                      isEdit = false;
+                      currentId = currentId;
+                    } else {
+                      isEdit = true;
+                      currentId = layui.data('current_edit_data').salesInformation.id;
+                    }
+                    window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-four.html?type=' + currentType + '&number=' + currentNumber + '&id=' + currentId + '&isEdit=' + isEdit + '&from=' + fromPage;
+                  } else {
+                    layer.msg(res.msg);
+                  }
+                });
+              }
+            } else {
+              var theSalesInformation = layui.data('current_edit_data').salesInformation;
+              if (!theSalesInformation || $.isEmptyObject(theSalesInformation)) {
+                isEdit = false;
+                currentId = currentId;
+              } else {
+                isEdit = true;
+                currentId = theSalesInformation.id;
+              }
+              window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-four.html?type=' + currentType + '&number=' + currentNumber + '&id=' + currentId + '&isEdit=' + isEdit + '&from=' + fromPage;
+            }
+            return false;
+          });
         }
 
         s.init = function() {
           s.upimages = [];//存放上传后的图片路径
           s.files = {}; // 存放添加的文件
 
-          // s.initTips('可通过点击/拖拽至以下区域添加图片，一次可添加多张，可分多次添加', $dragUpload, 8000);
-          // s.initTips('添加完图片后，点击此按钮上传图片,上传完成后再点击「下一步」', $('#upload-images'), 16000);
+          console.log(layui.data('current_edit_data').jadeInformation);
+          console.log(layui.data('current_edit_data').processingInformation);
+          console.log(layui.data('current_edit_data').outboundInformation);
+          console.log(layui.data('current_edit_data').salesInformation);
 
-          s.initLabel(initValue);
+          if (isEdit) {
+            var theData = layui.data('current_edit_data').outboundInformation;
+            console.log(theData);
+            s.handleInitData(theData);
+          } else {
+            // currentId = lay                                                                ui.data('current_edit_data').jadeInformation.id;
+            currentId = currentId;
+            s.initLabel(initValue);
+          }
 
-          // $dragUpload.on('mouseenter',function(){
-          //   s.initTips('可通过点击/拖拽至以下区域添加图片，一次可添加多张，可分多次添加', $dragUpload, 6000);
-          // }).on('mouseout', function(){
-          //   layer.close(layer.index);
-          // })
-          // $('#upload-images').on('mouseenter',function(){
-          //   s.initTips('添加完图片后，点击此按钮上传图片,上传完成后再点击「下一步」', $(this), 6000);
-          // }).on('mouseout', function () {
-          //   layer.close(layer.index);
-          // })
+          s.submitBaseInfo(isEdit);
 
           laydate.render({
             elem: '#date'
             ,type: 'datetime'
           });
 
-          //文件上传
-          s.uploadRender($('#drag'), putImagesUrl , '#upload-images', token);
+          //文件上传next
+          // s.uploadRender($('#drag'), putImagesUrl , '#upload-images', token);
+          s.uploadRender($('#drag'), putImagesUrl, token);
 
           form.on('select(isOutbound)',function(data){
             console.log(data.value);
@@ -513,30 +610,6 @@
             }
           })
 
-          form.on('submit(store-next)', function(data){
-            var obj = data.field;
-            obj.file = undefined;
-            obj.isOutbound = undefined;
-            obj.remarkImage = s.upimages.join();
-            obj.jadeId = currentId;
-            console.log(s.upimages);
-            var putOutboundInfoData = JSON.stringify(obj);
-
-            console.log(putOutboundInfoData);
-            if (initValue == 1) {
-              requestPut(putOutboundInfoUrl, token, putOutboundInfoData, function(res){
-                console.log(res);
-                if (res.code === ERR_OK) {
-                  window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-four.html?type=' + currentType + '&number=' + currentNumber + '&jadeId=' + currentId;
-                } else {
-                  layer.msg(res.msg);
-                }
-              });
-            } else {
-              window.parent.document.getElementById("step-iframe").contentWindow.location.href = './step-four.html?type=' + currentType + '&number=' + currentNumber + '&jadeId=' + currentId;
-            }
-            return false;
-          });
 
         }
         s.init();

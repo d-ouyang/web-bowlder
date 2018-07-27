@@ -126,7 +126,8 @@
       var fromPage, isLog, baseUrl, token, history_data;
 
       var init = function () {
-        fromPage = getParamValue('from') || 'index';
+        fromPage = getParamValue('from');
+        console.log(fromPage);
         token = layui.data('login_info').access_token;
         isLog = returnLoginState(token);
         baseUrl = returnBaseUrl();
@@ -237,7 +238,7 @@
 
       var addModule = (function(a){
         var currentType = getParamValue('type');
-        // var currentId = getParamValue('id');
+        var currentId = getParamValue('id');
         var currentNumber = getParamValue('number');
         var currentSrc = null;
 
@@ -245,7 +246,7 @@
           currentType = 1; // 默认添加原石
           currentSrc = '"step-one.html?type=' + currentType + '"';
         } else {
-          currentSrc = '"step-one.html?type='+ currentType + '&number='+ currentNumber +'"';
+          currentSrc = '"step-one.html?type='+ currentType + '&number='+ currentNumber + '&id='+ currentId +'&from='+ fromPage +'"';
         }
 
         console.log(currentSrc);
