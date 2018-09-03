@@ -7,8 +7,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>第四步</title>
   <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-  <link rel="stylesheet" href="../layui/css/layui.css">
-  <link rel="stylesheet" href="../common/style/base.css">
+  <link rel="stylesheet" href="layui/css/layui.css">
+  <link rel="stylesheet" href="common/style/base.css">
 </head>
 <style>
   .step{
@@ -306,8 +306,8 @@
   </div>
 </section>
 </body>
-<script type="text/javascript" src="../layui/layui.js"></script>
-<script type="text/javascript" src="../libs/plugin.js?id=10"></script>
+<script type="text/javascript" src="layui/layui.js"></script>
+<script type="text/javascript" src="libs/plugin.js?id=10"></script>
 <script type="text/javascript">
   $(function() {
     layui.use(['layer', 'form', 'flow','laydate','upload', 'laytpl'],function(){
@@ -532,7 +532,7 @@
                       ,shade: 0.1 //遮罩透明度
                       ,offset: '660px'
                     },function(){
-                      window.parent.location.href = './index.html';
+                      window.parent.location.href = 'index.html';
                     },function(){
                       window.parent.location.href = './detail.html?type=' + currentType + '&number=' + currentNumber + '&from=' + fromPage;
                     })
@@ -554,9 +554,9 @@
                       ,shade: 0.1 //遮罩透明度
                       ,offset: '660px'
                     },function(){
-                      window.parent.location.href = './index.html';
+                      window.parent.location.href = 'index.html';
                     },function(){
-                      parentIframe.contentWindow.location.href = './step-one.html?type=1';
+                      parentIframe.contentWindow.location.href = 'step-one.html';
                     })
                   } else {
                     layer.msg(res.msg);
@@ -570,7 +570,7 @@
                   ,shade: 0.1 //遮罩透明度
                   ,offset: '660px'
                 },function(){
-                  window.parent.location.href = './index.html';
+                  window.parent.location.href = 'index.html';
                 },function(){
                   window.parent.location.href = './detail.html?type=' + currentType + '&number=' + currentNumber + '&from=' + fromPage;
                 })
@@ -580,9 +580,9 @@
                   ,shade: 0.1 //遮罩透明度
                   ,offset: '660px'
                 },function(){
-                  window.parent.location.href = './index.html';
+                  window.parent.location.href = 'index.html';
                 },function(){
-                  parentIframe.contentWindow.location.href = './step-one.html?type=1';
+                  parentIframe.contentWindow.location.href = 'step-one.html';
                 })
               }
             }
